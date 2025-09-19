@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CaféFlow - Modern Ordering Experience</title>
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      /* Global Styles */
+      :root {
+        --primary-color: #ff6b00; /* Vibrant orange for accents, inspired by Burger King */
+        --secondary-color: #2a1b0a; /* Dark coffee brown for backgrounds */
+        --accent-color: #e5c07b; /* Warm caramel for highlights */
+        --text-color: #f2e8d5; /* Light cream for text */
+        --background-color: #1c110a; /* Deep wood-like background */
+        --glass-bg: rgba(255, 255, 255, 0.1); /* For glassmorphism */
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-blur: blur(20px);
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 30px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-bottom: 1px solid var(--glass-border);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--accent-color);
+      }
+
+      .logo img {
+        width: 50px;
+        margin-right: 15px;
+      }
+
+      nav {
+        display: flex;
+      }
+
+      nav button {
+        background: none;
+        border: none;
+        margin: 0 15px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+      }
+
+      nav button:hover {
+        color: var(--primary-color);
+      }
+
+      .cart-badge {
+        position: relative;
+      }
+
+      .cart-badge::after {
+        content: attr(data-count);
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: var(--primary-color);
+        color: #fff;
+        border-radius: 50%;
+        height: fit-content;
+        width: 10px;
+        font-size: 0.6rem;
+        font-weight: bold;
+      }
+
+      main {
+        padding: 30px;
+        min-height: calc(100vh - 80px);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--accent-color);
+      }
+      p {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        color: var(--text-color);
+      }
+
+      .search-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      .search-bar input {
+        width: 400px;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        color: var(--text-color);
+        font-size: 1rem;
+        border: 1px solid var(--glass-border);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .search-bar input:focus {
+        box-shadow: 0 0 10px var(--primary-color);
+        outline: none;
+      }
+
+      .categories {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .categories button {
+        margin: 5px 10px;
+        padding: 12px 25px;
+        border: none;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: 30px;
+        cursor: pointer;
+        color: var(--text-color);
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.2s ease;
+        border: 1px solid var(--glass-border);
+      }
+
+      .categories button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .categories button.active {
+        background: var(--primary-color);
+        color: #fff;
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+      }
+
+      .menu-item {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: 20px;
+        padding: 10px;
+        text-align: center;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid var(--glass-border);
+        perspective: 1000px; /* Enable 3D space for flip effect */
+        min-height: 300px; /* Ensure consistent height */
+        aspect-ratio: 3 / 4; /* Maintain card proportions */
+        position: relative; /* Contain absolute children */
+      }
+
+      .menu-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+      }
+
+      .menu-item.flipped .card-inner {
+        transform: rotateY(180deg);
+      }
+
+      .card-front,
+      .card-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Distribute content evenly */
+        align-items: center;
+        padding: 10px;
+        box-sizing: border-box;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+        overflow: hidden; /* Prevent content overflow */
+      }
+
+      .card-front img {
+        width: 100%;
+        min-height: 150px; /* Limit image height */
+        object-fit: cover; /* Ensure image fits without distortion */
+        border-radius: 15px;
+        margin-bottom: 10px;
+      }
+
+      .card-front h3,
+      .card-back h3 {
+        font-size: 1.2rem;
+        margin: 8px 0;
+        color: var(--accent-color);
+      }
+
+      .card-front p,
+      .card-back p {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin: 0 0 10px;
+        max-width: 90%; /* Prevent text overflow */
+      }
+
+      .card-back button {
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        padding: 8px 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
+
+      .card-back {
+        transform: rotateY(180deg);
+      }
+
+      .add-to-cart {
+        background: linear-gradient(135deg, var(--primary-color), #ff8c00);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        pointer-events: auto;
+        font-size: 0.9rem;
+      }
+
+      .add-to-cart:hover {
+        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+      }
+
+      .add-to-cart:active {
+        transform: scale(0.95);
+      }
+
+      .menu-item.flipped .add-to-cart {
+        pointer-events: none;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 2000;
+      }
+
+      .modal.show {
+        display: flex;
+        opacity: 1;
+      }
+
+      .modal-content {
+        align-items: center;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        padding: 30px;
+        border-radius: 20px;
+        width: 350px;
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow);
+        color: var(--text-color);
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+
+      .modal-content select,
+      .modal-content input {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+      }
+
+      /* Cart Page */
+      #cart-items {
+        margin-bottom: 30px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid var(--glass-border);
+      }
+
+      .cart-item img {
+        width: 60px;
+        margin-right: 15px;
+        border-radius: 10px;
+      }
+
+      .cart-item span {
+        flex: 1;
+      }
+
+      .cart-item button {
+        background: #ff0000;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+
+      .cart-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+      }
+
+      .customer-info {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .customer-info,
+      .order-summary {
+        flex: 1;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid var(--glass-border);
+      }
+
+      .customer-info input,
+      .customer-info textarea {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+      }
+
+      .order-summary button {
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      /* Admin Styles */
+      .admin-container {
+        display: flex;
+      }
+
+      .admin-sidebar {
+        width: 250px;
+        flex-shrink: 0;
+        padding: 20px;
+        backdrop-filter: var(--glass-blur);
+        border-right: 1px solid var(--glass-border);
+        height: calc(100vh - 80px);
+        position: sticky;
+        top: 80px;
+        box-shadow: var(--shadow);
+      }
+
+      .admin-sidebar button {
+        display: block;
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 15px;
+        border: none;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--text-color);
+        font-weight: bold;
+        transition: background 0.3s ease;
+      }
+
+      .admin-sidebar button:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .admion-sdebar button.ative {
+        background: var(--primary-color);
+        color: #fff;
+      }
+
+      .admin-content {
+        flex: 1;
+        padding: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid var(--glass-border);
+        text-align: left;
+        font-size: x-small;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .add-form {
+        background: var(--glass-bg);
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+      }
+
+      .add-form input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+      }
+
+      .add-form button {
+        background: var(--primary-color);
+        color: #ffffff4b;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 40px;
+        cursor: pointer;
+      }
+
+      .qr-input {
+        width: 200px;
+        padding: 10px;
+        margin-right: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+      }
+
+      /* Footer */
+      footer {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-top: 1px solid var(--glass-border);
+        text-align: center;
+        padding: 30px 20px;
+        box-shadow: var(--shadow);
+        margin-top: 50px;
+      }
+
+      .footer-content {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .footer-logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--accent-color);
+        margin-bottom: 10px;
+      }
+
+      .footer-logo img {
+        width: 35px;
+        margin-right: 10px;
+      }
+
+      .footer-nav {
+        margin: 15px 0;
+        justify-content: center;
+      }
+
+      .footer-nav a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+        font-weight: bold;
+      }
+
+      .footer-nav a:hover {
+        color: var(--primary-color);
+      }
+
+      .tagline {
+        font-style: italic;
+        margin: 10px 0;
+        color: var(--accent-color);
+      }
+
+      .copy {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      @media (max-width: 768px) {
+        main {
+          padding: 15px;
+        }
+        h1 {
+          font-size: 1.5rem;
+          margin-top: auto;
+          margin-bottom: 20px;
+        }
+        p {
+          font-size: 1rem;
+          margin-top: auto;
+          margin-bottom: 20px;
+        }
+
+        .admin-container {
+          flex-direction: column;
+          overflow-x: hidden;
+        }
+        .admin-sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          top: 0;
+          flex-direction: row;
+          border-right: none;
+          border-bottom: 1px solid var(--glass-border);
+          justify-content: center;
+          align-items: center;
+        }
+        .admin-sidebar button {
+          display: inline-block;
+          width: auto;
+          margin-bottom: 0px;
+          margin: 5px;
+          padding: 10px 15px;
+          font-size: 0.9rem;
+        }
+
+        .admin-sidebar button.active {
+          background: var(--primary-color);
+          color: #fff;
+        }
+        .cart-bottom {
+          flex-direction: column;
+        }
+        .menu-grid {
+          grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+          gap: 15px;
+        }
+        .search-bar input {
+          width: 90%;
+        }
+        .categories {
+          justify-content: center;
+          gap: 2px;
+          margin-bottom: 15px;
+        }
+        .categories button {
+          padding: 8px 15px;
+          font-size: 0.6rem;
+        }
+        .menu-item {
+          padding: 0px;
+          min-height: 200px;
+          aspect-ratio: 2 / 3;
+        }
+        .card-front img,
+        .card-back img {
+          max-height: 80px;
+          border-radius: 10px;
+        }
+        .card-front h3,
+        .card-back h3 {
+          font-size: 0.7rem;
+        }
+        .card-front p,
+        .card-back p {
+          font-size: 0.6rem;
+        }
+        .card-back h5 {
+          font-size: 0.7rem;
+          margin: 5px 0;
+        }
+        .add-to-cart,
+        .card-back button {
+          padding: 6px 12px;
+          font-size: 0.7rem;
+        }
+
+        .add-form {
+          background: var(--glass-bg);
+          border-radius: 15px;
+        }
+        .add-form input {
+          width: 20%;
+          border-radius: 10px;
+          border: 1px solid var(--glass-border);
+          background: rgba(255, 255, 255, 0.05);
+          color: var(--text-color);
+        }
+        .header,
+        footer {
+          padding: 10px 1px;
+          margin-bottom: 0%;
+        }
+        .footer-logo img {
+          width: 20px;
+          margin-right: 10px;
+        }
+        .logo span,
+        .footer-logo span {
+          font-size: 0.8rem;
+        }
+        .logo img {
+          width: 40%;
+          margin-right: 10px;
+        }
+        .footer-content {
+          padding: 0 5px;
+          font-size: 0.7rem;
+        }
+        .footer-content p {
+          font-size: 0.9rem;
+        }
+        nav button {
+          margin: 0 8px;
+          font-size: 0.8rem;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .print-bill,
+        .print-bill * {
+          visibility: visible;
+        }
+        .print-bill {
+          position: absolute;
+          left: 0;
+          top: 0;
+          color: #000;
+          background: #fff;
+        }
+      }
+    </style>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+    ></script>
+  </head>
+  <body>
+
+    <div class="TableNumber text-['#2a1b0a'] lg:text-5xl text-2xl font-bold flex items-center justify-center absolute lg:right-20 right-5 lg:top-[20%] rounded-full bg-[#ff6b00] lg:w-20 w-10 lg:h-20 h-10 top-[11%]"><%= number %></div>
+  
+
+
+    <header>
+      <div class="logo">
+        <img
+          src="https://placehold.co/40x40/orange/white?text=C"
+          alt="CaféFlow Logo"
+        />
+        <a href="#" style="cursor: pointer;"><span>CaféFlow</span></a>
+      </div>
+      <nav>
+        <button onclick="showPage('menu')">Menu</button>
+        <button class="cart-badge" onclick="showPage('cart')" data-count="0">
+          Cart
+        </button>
+        <button onclick="showPage('orders')">Orders</button>
+        <!-- <button onclick="showPage('admin')">Admin</button> -->
+      </nav>
+    </header>
+
+
+
+    <main id="content"></main>
+
+
+
+    <!-- Modal for Item Details -->
+    <div id="item-modal" class="modal">
+      <div class="modal-content">
+        <h2 id="modal-name"></h2>
+        <img id="modal-image" width="max" height="200px" />
+        <p id="modal-description"></p>
+        <p>Price: ₹<span id="modal-base-price"></span></p>
+        <label>Size:</label>
+        <select id="modal-size">
+          <option value="0">Single (+₹0)</option>
+          <option value="1.50">Double (+₹15.00)</option></select
+        ><br />
+        <label>Extra:</label>
+        <select id="modal-extra">
+          <option value="0">None (+₹0)</option>
+          <option value="1.00">Extra Shot (+₹40.00)</option></select
+        ><br />
+        <label>Quantity:</label>
+        <input type="number" name="quantity" id="modal-quantity" value="1" min="1" /><br />
+        <button class="add-to-cart" onclick="addToCartFromModal()">
+          Add to Cart
+        </button>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- Modal for Add/Edit Item -->
+    <div id="edit-modal" class="modal">
+      <div class="modal-content">
+        <h2 id="edit-title">Add New Item</h2>
+        <input id="edit-name" placeholder="Name" />
+        <input id="edit-category" placeholder="Category" />
+        <input id="edit-price" type="number" placeholder="Price" />
+        <input id="edit-description" placeholder="Description" />
+        <input id="edit-image" placeholder="Image URL" />
+        <button class="add-to-cart" onclick="saveItem()">Save</button>
+        <button onclick="closeEditModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img
+            src="https://placehold.co/40x40/orange/white?text=C"
+            alt="CaféFlow Logo"
+          />
+          <span>CaféFlow</span>
+        </div>
+        <p class="tagline">Brewing happiness, one cup at a time ☕</p>
+        <nav class="footer-nav">
+          <a href="#" onclick="showPage('menu')">Menu</a>
+          <a href="#" onclick="showPage('orders')">Orders</a>
+          <a href="#" onclick="showPage('admin')">Admin</a>
+          <a href="#">Contact</a>
+        </nav>
+        <p class="copy">&copy; 2025 CaféFlow. All rights reserved.</p>
+        <p class="copy">A product of Mahirag</p>
+      </div>
+    </footer>
+
+    <script>
+      // ---------- State & Constants ----------
+      // let menuItems = [
+      //   {
+      //     id: 1,
+      //     name: "Artisan Espresso",
+      //     category: "coffee",
+      //     price: 3.5,
+      //     description: "Finely ground coffee beans, pressurized hot water",
+      //     image: "https://placehold.co/200x200?text=Espresso",
+      //     ingredients: "Coffee beans, water",
+      //   },
+      //   {
+      //     id: 2,
+      //     name: "Vanilla Latte",
+      //     category: "coffee",
+      //     price: 4.75,
+      //     description: "Smooth espresso with steamed milk and vanilla syrup",
+      //     image: "https://placehold.co/200x200?text=Latte",
+      //     ingredients: "Espresso, steamed milk, vanilla syrup, sugar",
+      //   },
+      //   {
+      //     id: 3,
+      //     name: "Earl Grey Tea",
+      //     category: "tea",
+      //     price: 3.25,
+      //     description: "Classic bergamot-infused black tea blend",
+      //     image: "https://placehold.co/200x200?text=Tea",
+      //     ingredients: "Black tea, bergamot oil",
+      //   },
+      //   {
+      //     id: 4,
+      //     name: "Iced Matcha Latte",
+      //     category: "cold drinks",
+      //     price: 5.25,
+      //     description: "Refreshing iced matcha with milk",
+      //     image: "https://placehold.co/200x200?text=Matcha",
+      //     ingredients: "Matcha powder, milk, ice, sweetener",
+      //   },
+      //   {
+      //     id: 5,
+      //     name: "Avocado Toast",
+      //     category: "breakfast",
+      //     price: 8.95,
+      //     description: "Toasted bread with smashed avocado",
+      //     image: "https://placehold.co/200x200?text=Toast",
+      //     ingredients: "Sourdough bread, avocado, lemon juice, salt, pepper",
+      //   },
+      //   {
+      //     id: 6,
+      //     name: "Quinoa Buddha Bowl",
+      //     category: "lunch",
+      //     price: 12.5,
+      //     description: "Healthy bowl with quinoa, veggies",
+      //     image: "https://placehold.co/200x200?text=Bowl",
+      //     ingredients: "Quinoa, kale, sweet potato, chickpeas, tahini dressing",
+      //   },
+      //   {
+      //     id: 7,
+      //     name: "Chocolate Brownie",
+      //     category: "desserts",
+      //     price: 4.25,
+      //     description: "Rich chocolate brownie",
+      //     image: "https://placehold.co/200x200?text=Brownie",
+      //     ingredients:
+      //       "Cocoa powder, flour, sugar, butter, eggs, chocolate chips",
+      //   },
+      //   {
+      //     id: 8,
+      //     name: "Mixed Berry Muffin",
+      //     category: "snacks",
+      //     price: 3.75,
+      //     description: "Muffin with mixed berries",
+      //     image: "https://placehold.co/200x200?text=Muffin",
+      //     ingredients: "Flour, sugar, eggs, butter, blueberries, raspberries",
+      //   },
+      // ];
+
+      let cart = [];
+      let orders = [];
+      let orderIdCounter = 1;
+      const taxRate = 0.1;
+      let currentItem;
+      let editingItemId = null;
+
+      // ---------- Persistence (localStorage) ----------
+      function loadState() {
+        try {
+          const saved = JSON.parse(
+            localStorage.getItem("cafeflow_state") || "{}"
+          );
+          if (saved.cart) cart = saved.cart;
+          if (saved.orders) orders = saved.orders;
+          if (saved.orderIdCounter) orderIdCounter = saved.orderIdCounter;
+        } catch (e) {
+          console.warn("State load failed:", e);
+        }
+        updateCartBadge();
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(
+            "cafeflow_state",
+            JSON.stringify({ cart, orders, orderIdCounter })
+          );
+        } catch (e) {
+          console.warn("State save failed:", e);
+        }
+      }
+
+      // ---------- Init (fix for DOMContentLoaded timing) ----------
+      (function init() {
+        loadState();
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", () => showPage("menu"));
+        } else {
+          showPage("menu");
+        }
+      })();
+
+      // ---------- Routing ----------
+      function showPage(page) {
+        const content = document.getElementById("content");
+        if (!content) {
+          console.error("Content element not found");
+          return;
+        }
+        content.innerHTML = "";
+        if (page === "menu") {
+          renderMenu();
+        } else if (page === "cart") {
+          renderCart();
+        } else if (page === "orders") {
+          renderOrders();
+        } else if (page === "admin") {
+          renderAdmin();
+        }
+      }
+
+      // ---------- Menu ----------
+     async function renderMenu() {
+        const content = document.getElementById("content");
+        if (!content) return;
+        content.innerHTML = `
+          <h1>Delicious Menu</h1>
+          <p>Discover our carefully curated selection of artisanal coffee, fresh food, and delightful treats</p>
+          <div class="search-bar"><input type="text" placeholder="Search menu items..."></div>
+          <div class="categories">
+            <button>All</button><button>Coffee</button><button>Tea</button><button>Cold Drinks</button><button>Breakfast</button><button>Lunch</button><button>Desserts</button><button>Snacks</button>
+          </div>
+          <div class="menu-grid"></div>
+        `;
+        const grid = content.querySelector(".menu-grid");
+        if (!grid) {
+          console.error("Menu grid not found");
+          return;
+        }
+       const response = await fetch('http://localhost:3000/menu/content');
+       const data = await response.json();
+       menuItems = data.menus;
+
+        menuItems.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "menu-item";
+          card.dataset.category = item.category;
+          card.innerHTML = `
+            <div class="card-inner">
+              <div class="card-front">
+                <img class="object-cover h-[100%]" src="${item.image}" alt="${item.name}">
+                <h3 class="uppercase"> ${item.name} ₹${item.price.toFixed(2)}</h3>
+                
+                <button class="add-to-cart" onclick="openModal('${item._id}')">Add to Cart</button>
+              </div>
+              <div class="card-back">
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <h5>Ingredients:</h5>
+                <p>${item.ingredients}</p>
+                <button class="cursor-pointer" onclick="this.closest('.menu-item').classList.remove('flipped')">Back</button>
+              </div>
+            </div>
+          `;
+          card.addEventListener("click", (e) => {
+            if (
+              !e.target.closest(".add-to-cart") &&
+              !e.target.closest(".card-back button")
+            ) {
+              card.classList.toggle("flipped");
+            }
+          });
+          grid.appendChild(card);
+        });
+
+        // Search functionality
+        const searchInput = content.querySelector(".search-bar input");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            const term = e.target.value.toLowerCase();
+            const items = grid.querySelectorAll(".menu-item");
+            items.forEach((item) => {
+              const name = item
+                .querySelector(".card-front h3")
+                .textContent.toLowerCase();
+              const desc = item
+                .querySelector(".card-front p")
+                .textContent.toLowerCase();
+              const ingredients = item
+                .querySelector(".card-back p")
+                .textContent.toLowerCase();
+              item.style.display =
+                name.includes(term) ||
+                desc.includes(term) ||
+                ingredients.includes(term)
+                  ? ""
+                  : "none";
+      
+            });
+          });
+        }
+
+        // Category filter
+        const catButtons = content.querySelectorAll(".categories button");
+        catButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const cat = btn.textContent.toLowerCase();
+            catButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            const items = grid.querySelectorAll(".menu-item");
+            items.forEach((item) => {
+              const itemCat = item.dataset.category;
+              item.style.display =
+                cat === "all" || cat === itemCat ? "" : "none";
+            });
+          });
+        });
+        // Default to All
+        if (catButtons[0]) catButtons[0].click();
+      }
+
+      async function openModal(itemId) {
+        const item =await menuItems.find((i) => i._id === itemId);
+        
+        if (!item) return;
+        document.getElementById("modal-name").textContent = item.name;
+        document.getElementById("modal-image").src = item.image;
+        document.getElementById("modal-description").textContent =
+          item.description;
+        document.getElementById("modal-base-price").textContent =
+          item.price.toFixed(2);
+        document.getElementById("modal-quantity").value = 1;
+        document.getElementById("item-modal").classList.add("show");
+        currentItem = item;
+      }
+
+      function closeModal() {
+        document.getElementById("item-modal").classList.remove("show");
+      }
+
+      function addToCartFromModal() {
+        const sizeExtra = parseFloat(
+          document.getElementById("modal-size").value
+        );
+        const extra = parseFloat(document.getElementById("modal-extra").value);
+        const quantity = parseInt(
+          document.getElementById("modal-quantity").value
+        );
+        const totalPrice = (currentItem.price + sizeExtra + extra) * quantity;
+        cart.push({ ...currentItem, quantity, totalPrice, sizeExtra, extra });
+        saveState();
+        updateCartBadge();
+        closeModal();
+        if (
+          document.getElementById("content").innerHTML.includes("Your Cart")
+        ) {
+          renderCart();
+        }
+      }
+
+      function updateCartBadge() {
+        const badge = document.querySelector(".cart-badge");
+        if (badge) badge.dataset.count = cart.length;
+      }
+
+      // ---------- Cart ----------
+      function renderCart() {
+        const content = document.getElementById("content");
+        if (!content) return;
+        console.log(cart)
+        let subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+        let tax = subtotal * taxRate;
+        let total = subtotal + tax;
+        
+
+
+
+
+
+        content.innerHTML = `
+          <h1>Your Cart</h1>
+          <div id="cart-items"></div>
+          <div class="cart-bottom">
+            <div class="customer-info">
+              <h3>Customer Information</h3>
+<form action="/place/order" method="post">
+
+
+              <input id="cust-name" type="text" name="custName" placeholder="Name *"><br>
+              <input id="cust-email" type="email" name="custEmail" placeholder="Email *"><br>
+              <textarea id="instructions" name="instruction" placeholder="Special Instructions"></textarea>
+              
+
+</form>
+              
+            </div>
+            <div class="order-summary">
+              <h3>Order Summary</h3>
+              <p>Subtotal: ₹${subtotal.toFixed(2)}</p>
+              <p>Tax: ₹${tax.toFixed(2)}</p>
+              <p>Total: $${total.toFixed(2)}</p>
+              <button class="add-to-cart" onclick="placeOrder()">Place Order</button>
+            </div>
+          </div>
+        `;
+        const itemsDiv = document.getElementById("cart-items");
+        if (!itemsDiv) return;
+        cart.forEach((item, index) => {
+          const div = document.createElement("div");
+          div.className = "cart-item";
+          div.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <span>${item.name} - ₹${item.totalPrice.toFixed(2)} x ${
+            item.quantity
+          }</span>
+            <button onclick="removeFromCart(${index})">Remove</button>
+          `;
+          itemsDiv.appendChild(div);
+        });
+      }
+
+      function removeFromCart(index) {
+        cart.splice(index, 1);
+        saveState();
+        updateCartBadge();
+        renderCart();
+      }
+
+      function placeOrder() {
+        const name = document.getElementById("cust-name").value.trim();
+        const email = document.getElementById("cust-email").value.trim();
+        if (!name || !email) {
+          alert("Please enter name and email.");
+          return;
+        }
+        const instructions = document.getElementById("instructions").value;
+        const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+        const tax = subtotal * taxRate;
+        const total = subtotal + tax;
+        const tableNumber = "<%= number %>";
+
+
+    fetch('/place/order', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name,
+    email,
+    instructions,
+    cart: cart.map(item => ({
+      product: item._id,
+      quantity: item.quantity
+    })),
+    subtotal,
+    tax,
+    total,
+    tableNumber
+  })
+})
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message || "Order placed!");
+    cart = [];
+    saveState();
+    updateCartBadge();
+    showPage("menu");
+  })
+  .catch(err => {
+    alert("Order failed. Please try again.");
+    console.error(err);
+  });
+
+}
+      
+
+      // ---------- Orders ----------
+      function renderOrders() {
+        const content = document.getElementById("content");
+        if (!content) return;
+        content.innerHTML = `
+          <h1>Your Orders</h1>
+          <table>
+            <tr><th>Order Info</th><th>Date</th><th>Total</th><th>Status</th></tr>
+            ${orders
+              .map(
+                (o) =>
+                  `<tr><td>${o.name} #CF-${o.id}</td><td>${
+                    o.date
+                  }</td><td>₹${o.total.toFixed(2)}</td><td>${
+                    o.status
+                  }</td></tr>`
+              )
+              .join("")}
+          </table>
+        `;
+      }
+
+      // ---------- Admin ----------
+      function renderAdmin() {
+        const content = document.getElementById("content");
+        if (!content) return;
+        content.innerHTML = `
+          <div class="admin-container">
+            <div class="admin-sidebar">
+              <button onclick="renderAdminSection('dashboard')">Dashboard</button>
+              <button onclick="renderAdminSection('orders')">Orders</button>
+              <button onclick="renderAdminSection('menu')">Menu Items</button>
+              <button onclick="renderAdminSection('qr')">QR Generator</button>
+              <button onclick="renderAdminSection('billing')">Billing</button>
+              <button onclick="showPage('menu')">Back to Ordering Site</button>
+            </div>
+            <div class="admin-content" id="admin-content"></div>
+          </div>
+        `;
+        renderAdminSection("dashboard");
+      }
+
+      function renderAdminSection(section) {
+        const adminContent = document.getElementById("admin-content");
+        if (!adminContent) return;
+        adminContent.innerHTML = "";
+        if (section === "dashboard") {
+          const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+          const totalOrders = orders.length;
+          const avgValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+          adminContent.innerHTML = `
+            <h1>Dashboard</h1>
+            <div>Total Revenue: ₹${totalRevenue.toFixed(2)}</div>
+            <div>Total Orders: ${totalOrders}</div>
+            <div>Avg. Order Value: ₹${avgValue.toFixed(2)}</div>
+            <h2>Recent Orders</h2>
+            ${orders
+              .map(
+                (o) =>
+                  `<div>${o.name} - ₹${o.total.toFixed(2)} - ${o.date}</div>`
+              )
+              .join("")}
+          `;
+        } else if (section === "orders") {
+          adminContent.innerHTML = `
+            <h1>All Orders</h1>
+            <table>
+              <tr><th>Order Info</th><th>Date</th><th>Total</th><th>Status</th></tr>
+              ${orders
+                .map(
+                  (o) =>
+                    `<tr><td>${o.name} #CF-${o.id}</td><td>${
+                      o.date
+                    }</td><td>₹${o.total.toFixed(2)}</td><td>${
+                      o.status
+                    }</td></tr>`
+                )
+                .join("")}
+            </table>
+          `;
+        } else if (section === "menu") {
+          adminContent.innerHTML = `
+            <h1>Menu Items</h1>
+            <button onclick="openEditModal(null)">Add New Item</button>
+            <table>
+              <tr><th>Name</th><th>Category</th><th>Price</th><th>Available</th><th>Actions</th></tr>
+              ${menuItems
+                .map(
+                  (item) =>
+                    `<tr><td>${item.name}</td><td>${
+                      item.category
+                    }</td><td>₹${item.price.toFixed(
+                      2
+                    )}</td><td>Yes</td><td><button onclick="openEditModal(${
+                      item.id
+                    })">Edit</button><button onclick="deleteItem(${
+                      item.id
+                    })">Delete</button></td></tr>`
+                )
+                .join("")}
+            </table>
+          `;
+        } else if (section === "qr") {
+          adminContent.innerHTML = `
+            <h1>Generate Table QR Code</h1>
+            <input class="qr-input" type="number" id="table-number" placeholder="Table Number">
+            <button onclick="generateQR()">Generate QR Code</button>
+            <div id="qrcode"></div>
+          `;
+        } else if (section === "billing") {
+          adminContent.innerHTML = `
+            <h1>Billing</h1>
+            <table>
+              <tr><th>Order ID</th><th>Name</th><th>Total</th><th>Actions</th></tr>
+              ${orders
+                .map(
+                  (o) =>
+                    `<tr><td>#CF-${o.id}</td><td>${
+                      o.name
+                    }</td><td>₹${o.total.toFixed(
+                      2
+                    )}</td><td><button onclick="printBill(${
+                      o.id
+                    })">Print Bill</button></td></tr>`
+                )
+                .join("")}
+            </table>
+          `;
+        }
+      }
+
+      // ---------- Admin: CRUD ----------
+      function openEditModal(itemId) {
+        editingItemId = itemId;
+        const title = itemId ? "Edit Item" : "Add New Item";
+        document.getElementById("edit-title").textContent = title;
+        if (itemId) {
+          const item = menuItems.find((i) => i.id === itemId);
+          document.getElementById("edit-name").value = item.name;
+          document.getElementById("edit-category").value = item.category;
+          document.getElementById("edit-price").value = item.price;
+          document.getElementById("edit-description").value = item.description;
+          document.getElementById("edit-image").value = item.image;
+        } else {
+          document.getElementById("edit-name").value = "";
+          document.getElementById("edit-category").value = "";
+          document.getElementById("edit-price").value = "";
+          document.getElementById("edit-description").value = "";
+          document.getElementById("edit-image").value = "";
+        }
+        document.getElementById("edit-modal").classList.add("show");
+      }
+
+      function closeEditModal() {
+        document.getElementById("edit-modal").classList.remove("show");
+      }
+
+      function saveItem() {
+        const name = document.getElementById("edit-name").value;
+        const category = document.getElementById("edit-category").value;
+        const price = parseFloat(document.getElementById("edit-price").value);
+        const description = document.getElementById("edit-description").value;
+        const image = document.getElementById("edit-image").value;
+        if (!name || !category || isNaN(price) || !description || !image) {
+          alert("Please fill all fields.");
+          return;
+        }
+        if (editingItemId) {
+          const item = menuItems.find((i) => i.id === editingItemId);
+          item.name = name;
+          item.category = category.toLowerCase();
+          item.price = price;
+          item.description = description;
+          item.image = image;
+        } else {
+          const newId = Math.max(0, ...menuItems.map((m) => m.id)) + 1;
+          menuItems.push({
+            id: newId,
+            name,
+            category: category.toLowerCase(),
+            price,
+            description,
+            image,
+          });
+        }
+        closeEditModal();
+        renderAdminSection("menu");
+      }
+
+      function deleteItem(itemId) {
+        if (confirm("Are you sure you want to delete this item?")) {
+          menuItems = menuItems.filter((i) => i.id !== itemId);
+          renderAdminSection("menu");
+        }
+      }
+
+      // ---------- QR ----------
+      function generateQR() {
+        const tableNum = document.getElementById("table-number").value || "";
+        const qrDiv = document.getElementById("qrcode");
+        if (qrDiv) {
+          qrDiv.innerHTML = "";
+          try {
+            new QRCode(
+              qrDiv,
+              `https://your-site.com/menu?table=${encodeURIComponent(tableNum)}`
+            );
+          } catch (e) {
+            alert("QR library failed to load. Please check your connection.");
+          }
+        }
+      }
+
+      // ---------- Billing ----------
+      function printBill(orderId) {
+        const order = orders.find((o) => o.id === orderId);
+        if (!order) return;
+        const billWindow = window.open("", "", "height=500,width=800");
+        billWindow.document.write(
+          "<html><head><title>Bill</title></head><body>"
+        );
+        billWindow.document.write(
+          "<h1>Bill for Order #CF-" + order.id + "</h1>"
+        );
+        billWindow.document.write("<p>Date: " + order.date + "</p>");
+        billWindow.document.write("<p>Customer: " + order.name + "</p>");
+        billWindow.document.write(
+          "<table><tr><th>Item</th><th>Qty</th><th>Price</th></tr>"
+        );
+        order.items.forEach((item) => {
+          billWindow.document.write(
+            "<tr><td>" +
+              item.name +
+              "</td><td>" +
+              item.quantity +
+              "</td><td>₹" +
+              item.totalPrice.toFixed(2) +
+              "</td></tr>"
+          );
+        });
+        const subtotal = order.total / (1 + taxRate);
+        const tax = order.total - subtotal;
+        billWindow.document.write("</table>");
+        billWindow.document.write(
+          "<p>Subtotal: ₹" + subtotal.toFixed(2) + "</p>"
+        );
+        billWindow.document.write("<p>Tax: ₹" + tax.toFixed(2) + "</p>");
+        billWindow.document.write(
+          "<p>Total: ₹" + order.total.toFixed(2) + "</p>"
+        );
+        billWindow.document.write("</body></html>");
+        billWindow.document.close();
+        billWindow.print();
+      }
+    </script>
+
+  </body>
+</html>

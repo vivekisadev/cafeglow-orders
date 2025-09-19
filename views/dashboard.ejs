@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/javascript/dashboard.js"></script>
+</head>
+<body class="bg-[#2a1b0a] text-[#f2e8d5]">
+
+    <div class="w-full h-screen flex">
+        <div class="h-full w-80 border-r-2 border-white flex flex-col items-center px-8">
+            <h1 class="text-4xl text-[#e5c07b] mt-5">CaféFlow</h1>
+
+            <h1 class="text-2xl self-start mt-8">Hello <strong><%= admin.name %></strong></h1>
+
+
+            
+
+
+            
+            <button onclick="handleDashboard()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer"r">
+                Dashboard
+            </button>
+           
+           
+            <button onclick="handelOrder()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
+                Order
+            </button>
+            
+            
+            <button onclick="handelItems()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
+                Menu items
+            </button>
+            
+            
+            <button onclick="AddItems()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
+                Add Products
+            </button>
+            
+            
+            <button class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
+                Billing
+            </button>
+            
+            
+            <button class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">Graph</button>
+        </div>
+
+        <div class="DashboardContent w-full p-8 overflow-x-auto">
+            <h1 class="text-5xl text-white mb-7">Welcome to Admin Dashboard</h1>
+
+            <% let total = 0; %>
+            <% let numOrders = 0; %>
+            <% orders.forEach((order) => { %>
+                <% total += order.total; %>
+                <% numOrders++; %>
+            <% }); %>
+            <% sno =1 %>
+
+            <div class="flex flex-col text-white">
+                <h3 class="text-2xl">Total Revenue: <span class="text-[#ff6b00]"> ₹<%= total.toFixed(2) %> </span></h3>
+                <h3 class="mt-5 text-lg">Total Orders: <span class="text-[#ff6b00]"> <%= numOrders %> </span></h3>
+                
+                <div class="mt-5">
+                    <h3 class="text-xl mb-4">Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="border px-4 py-2">S.no.</th>
+                                <th class="border px-4 py-2">Table Number</th>
+                                <th class="border px-4 py-2">Name</th>
+                                <th class="border px-4 py-2">Price</th>
+                                <th class="border px-4 py-2">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% orders.forEach((order) => { %>
+                            <% if (order.cart && order.cart.length) { %>
+                                <tr>
+                                    <td class="border px-4 py-2"><%= sno %></td>
+                                    <td class="border px-4 py-2"><%= order.tableNumber %></td>
+                                    <td class="border px-4 py-2 w-40">
+
+                                        <div class="flex flex-col justify-between">
+                                            <% order.cart.forEach((item) => { %>
+                                                <div class="flex justify-between">
+
+                                                    <h5 class="w-fit">
+                                                        <%= item.product.name %> 
+                                                    </h5>
+                                                    
+                                                    <h5 class="w-fit">
+                                                        <%=item.quantity%>
+                                                    </h5>
+                                                </div>
+                                                    
+                                                <% }); %>
+                                        </div>
+
+                                        </td>
+
+                                        <td class="border px-4 py-2">
+                                             <div class="flex flex-col items-center">
+                                            <% order.cart.forEach((item) => { %>
+                                                <div class="flex justify-between">
+                                                        ₹<%= item.product.price.toFixed(2) %> 
+                                                </div>
+                                                <% }); %>
+                                        </div>
+
+                                        </td>
+                                        <td class="border px-4 py-2">₹<%= order.total ? order.total.toFixed(2) : '0.00' %></td>
+                                    </tr>
+                                    <% sno++ %>
+                            <% } %>
+                        <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Total sale: <strong>₹<%= total.toFixed(2) %></strong> -->
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

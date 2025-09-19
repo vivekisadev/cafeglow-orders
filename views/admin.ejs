@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+<body class="bg-[#2a1b0a] text-[#ff6b00] font-semibold">
+
+    <form action="/admin/login" method="post" class="h-screen w-full flex items-center justify-center ">
+        <div class="flex flex-col h-70 w-80 items-center justify-center relative">
+
+            <h1 class="text-4xl text-[#e5c07b]">CaféFlow</h1>
+
+            <label class="self-start" for="email">Email:</label>
+            <input class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " type="email" name="email" placeholder="Enter Email">
+            <label class="self-start mt-3" for="password">Password:</label>
+            <input class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " type="password" name="password" placeholder="Enter password">
+            <input type="submit" value="Submit" class="px-5 py-3 w-fit bg-blue-500 text-white mt-4 rounded-full">
+        </div>
+    </form>
+    
+</body>
+</html>
