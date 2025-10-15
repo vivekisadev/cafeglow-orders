@@ -30,7 +30,7 @@ if (typeof handleOrder === 'function') {
     
     try {
       console.log('🔄 Starting fetch request...');
-      const response = await fetch('/api/orders', {
+      const response = await fetch('/admin/orders', {
         credentials: 'include'
       });
       console.log('📡 Fetch response status:', response.status);
@@ -66,3 +66,45 @@ window.testOrderClick = function() {
 };
 
 console.log('✅ Diagnostic test setup complete. Use testOrderClick() to test clicking.');
+
+// Add a lightweight endpoint tester accessible from the browser console
+(function () {
+  if (typeof window === 'undefined') return;
+
+  async function safeFetch(url, options = {}) {
+    try {
+      const res = await fetch(url, options);
+      const contentType = res.headers.get('content-type') || '';
+      const text = await res.text();
+      let body = text;
+      if (contentType.includes('application/json')) {
+        try { body = JSON.parse(text); } catch { /* keep text */ }
+      }
+      return { url, ok: res.ok, status: res.status, body };
+    } catch (err) {
+      return { url, ok: false, status: 0, body: String(err) };
+    }
+  }
+
+  window.testCafeGlow = async function () {
+    const today = new Date().toISOString().slice(0,10);
+    const endpoints = [
+      { name: 'Health', url: '/health' },
+      { name: 'Home', url: '/' },
+      { name: 'Menu (Table 1)', url: '/menu?table=1' },
+      { name: 'Admin Login Page', url: '/admin', opts: { credentials: 'include' } },
+      { name: 'Admin Products', url: '/admin/products', opts: { credentials: 'include' } },
+      { name: 'Admin Orders', url: '/admin/orders', opts: { credentials: 'include' } },
+      { name: 'Admin Dashboard Content', url: '/admin/dashboard-content', opts: { credentials: 'include' } },
+      { name: 'Admin Analytics (today)', url: `/admin/analytics?startDate=${today}&endDate=${today}&view=daily`, opts: { credentials: 'include' } },
+    ];
+
+    console.group('CafeGlow Endpoint Tests');
+    for (const ep of endpoints) {
+      const result = await safeFetch(ep.url, ep.opts || {});
+      console.log(`• ${ep.name}:`, { status: result.status, ok: result.ok, sample: typeof result.body === 'string' ? result.body.slice(0, 120) : result.body });
+    }
+    console.groupEnd();
+    console.info('Tip: Run window.testCafeGlow() again anytime.');
+  };
+})();

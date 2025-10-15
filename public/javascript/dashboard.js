@@ -525,7 +525,8 @@ const handleItems = async () => {
   const response = await fetch("/admin/products", {
     credentials: 'include'
   });
-  const products = await response.json();
+  const data = await response.json();
+  const products = Array.isArray(data) ? data : (data.products || []);
 
   let tableRows = "";
   products.forEach((product) => {
