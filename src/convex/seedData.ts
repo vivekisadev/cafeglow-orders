@@ -12,6 +12,9 @@ export const seed = mutation({
       phone: "(555) 123-4567",
       isActive: true,
       ownerId: "dummy" as any,
+      openingTime: "9:00 AM",
+      closingTime: "10:00 PM",
+      workingDays: "Monday - Sunday",
     });
 
     const cafe2 = await ctx.db.insert("cafes", {

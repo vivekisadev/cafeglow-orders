@@ -21,6 +21,10 @@ export default function Menu() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [cart, setCart] = useState<Array<CartItem>>([]);
+  
+  // Get table number from URL query params
+  const searchParams = new URLSearchParams(window.location.search);
+  const tableNumber = searchParams.get("table");
 
   const cafes = useQuery(api.cafes.list);
   const cafe = cafes?.[0]; // Get the first (and only) cafe
@@ -79,7 +83,14 @@ export default function Menu() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <span className="text-xl font-bold text-slate-900 dark:text-white">{cafe?.name || "Menu"}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-xl font-bold text-slate-900 dark:text-white">{cafe?.name || "Menu"}</span>
+                {tableNumber && (
+                  <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-900 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-semibold">
+                    Table {tableNumber}
+                  </span>
+                )}
+              </div>
             </div>
             {totalItems > 0 && (
               <div className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 rounded-full px-4 py-2">
@@ -201,7 +212,7 @@ export default function Menu() {
                 <p className="text-3xl font-bold text-slate-900 dark:text-white">${totalAmount.toFixed(2)}</p>
               </div>
               <Button
-                onClick={() => navigate("/checkout", { state: { cart, cafe } })}
+                onClick={() => navigate("/checkout", { state: { cart, cafe, tableNumber } })}
                 size="lg"
                 className="px-8"
               >

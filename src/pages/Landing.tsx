@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Coffee, ShoppingBag, Sparkles, UtensilsCrossed } from "lucide-react";
+import { Coffee, Clock, MapPin, Phone, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function Landing() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
+  const cafes = useQuery(api.cafes.list);
+  const cafe = cafes?.[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -57,91 +61,116 @@ export default function Landing() {
         </div>
       </motion.nav>
 
-      {/* Hero Section */}
+      {/* Cafe Information Section */}
       <div className="container mx-auto px-4 pt-32 pb-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center max-w-4xl mx-auto"
-        >
-          <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 rounded-full px-6 py-3 mb-8">
-            <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <span className="text-purple-900 dark:text-purple-200 font-medium">Order fresh food and drinks</span>
+        {!cafe ? (
+          <div className="flex justify-center">
+            <Coffee className="w-8 h-8 text-purple-600 animate-spin" />
           </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-6xl mx-auto"
+          >
+            {/* Hero Image */}
+            <div className="bg-white dark:bg-slate-800 border rounded-3xl overflow-hidden mb-8">
+              <div className="relative h-96">
+                <img src={cafe.image} alt={cafe.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-8 left-8">
+                  <h1 className="text-5xl md:text-6xl font-bold text-white mb-3">{cafe.name}</h1>
+                  <p className="text-xl text-white/90">{cafe.description}</p>
+                </div>
+              </div>
+            </div>
 
-          <h1 className="text-6xl md:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
-            Delicious Food,
-            <br />
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Delivered Fresh
-            </span>
-          </h1>
+            {/* Cafe Details Grid */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {/* Contact & Location */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="bg-white dark:bg-slate-800 border rounded-2xl p-8"
+              >
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Contact & Location</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                      <MapPin className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Address</p>
+                      <p className="text-slate-900 dark:text-white font-medium">{cafe.address}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                      <Phone className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Phone</p>
+                      <p className="text-slate-900 dark:text-white font-medium">{cafe.phone}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
-          <p className="text-xl text-slate-600 dark:text-slate-300 mb-12 max-w-2xl mx-auto">
-            Browse our menu, place your order, and enjoy freshly prepared food and drinks. 
-            Skip the line and order ahead.
-          </p>
+              {/* Opening Hours */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="bg-white dark:bg-slate-800 border rounded-2xl p-8"
+              >
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Opening Hours</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                      <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Working Days</p>
+                      <p className="text-slate-900 dark:text-white font-medium">{cafe.workingDays || "Monday - Sunday"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                      <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Timing</p>
+                      <p className="text-slate-900 dark:text-white font-medium">
+                        {cafe.openingTime || "9:00 AM"} - {cafe.closingTime || "10:00 PM"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => navigate(isAuthenticated ? "/menu" : "/auth")}
-              size="lg"
-              className="text-lg px-8"
-            >
-              <ShoppingBag className="w-5 h-5 mr-2" />
-              {isAuthenticated ? "View Menu" : "Get Started"}
-            </Button>
-            <Button
-              onClick={() => navigate("/menu")}
-              size="lg"
-              variant="outline"
-              className="text-lg px-8"
-            >
-              Browse Menu
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Features Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="grid md:grid-cols-3 gap-6 mt-24 max-w-5xl mx-auto"
-        >
-          {[
-            {
-              icon: Coffee,
-              title: "Fresh & Quality",
-              description: "Freshly prepared food and drinks made with quality ingredients",
-            },
-            {
-              icon: UtensilsCrossed,
-              title: "Quick Service",
-              description: "Order ahead and skip the wait. Pick up when ready",
-            },
-            {
-              icon: ShoppingBag,
-              title: "Easy Ordering",
-              description: "Simple menu browsing and secure checkout process",
-            },
-          ].map((feature, index) => (
+            {/* CTA Section */}
             <motion.div
-              key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-              className="bg-white dark:bg-slate-800 border rounded-2xl p-8 hover:shadow-lg transition-all duration-300"
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-8 text-center"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center mb-6">
-                <feature.icon className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">{feature.title}</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{feature.description}</p>
+              <h2 className="text-3xl font-bold text-white mb-4">Ready to Order?</h2>
+              <p className="text-white/90 text-lg mb-6">Scan the QR code at your table or browse our menu online</p>
+              <Button
+                onClick={() => navigate("/menu")}
+                size="lg"
+                className="bg-white text-purple-600 hover:bg-white/90 text-lg px-8"
+              >
+                <ShoppingBag className="w-5 h-5 mr-2" />
+                View Menu
+              </Button>
             </motion.div>
-          ))}
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

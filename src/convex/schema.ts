@@ -40,6 +40,9 @@ const schema = defineSchema(
       phone: v.string(),
       isActive: v.boolean(),
       ownerId: v.id("users"),
+      openingTime: v.optional(v.string()),
+      closingTime: v.optional(v.string()),
+      workingDays: v.optional(v.string()),
     }).index("by_owner", ["ownerId"]),
 
     menuItems: defineTable({
