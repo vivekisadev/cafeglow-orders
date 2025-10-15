@@ -33,20 +33,24 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ Dashboard initialization complete!');
 });
 
-// User dropdown functionality
+ // User dropdown functionality
 const toggleUserDropdown = () => {
   const dropdown = document.getElementById('userDropdown');
+  if (!dropdown) return;
   dropdown.classList.toggle('hidden');
 };
 
-// Close dropdown when clicking outside
+ // Close dropdown when clicking outside (safe guards)
 document.addEventListener('click', (event) => {
-  const userProfile = document.querySelector('.user-profile');
   const dropdown = document.getElementById('userDropdown');
-  
-  if (!userProfile.contains(event.target)) {
-    dropdown.classList.add('hidden');
+  if (!dropdown) return;
+  const userProfile = document.querySelector('.user-profile');
+
+  // If clicking on userProfile or dropdown itself, do nothing
+  if ((userProfile && userProfile.contains(event.target)) || dropdown.contains(event.target)) {
+    return;
   }
+  dropdown.classList.add('hidden');
 });
 
 // Show Profile Page
@@ -142,8 +146,9 @@ const showProfile = () => {
     </div>
   `;
   
-  // Close dropdown
-document.getElementById('userDropdown').classList.add('hidden');
+  // Close dropdown (guard missing element)
+const dropdownEl = document.getElementById('userDropdown');
+if (dropdownEl) dropdownEl.classList.add('hidden');
 };
 
 // Save Settings Function
@@ -186,7 +191,7 @@ const applySettings = (settings) => {
       clearInterval(window.autoRefreshInterval);
     }
     window.autoRefreshInterval = setInterval(() => {
-      handleDashboardHome();
+      if (typeof handleDashboardHome === 'function') handleDashboardHome();
     }, 30000);
   } else {
     // Stop auto refresh
@@ -315,8 +320,9 @@ const showSettings = () => {
     </div>
   `;
   
-  // Close dropdown
-  document.getElementById('userDropdown').classList.add('hidden');
+  // Close dropdown (guard missing element)
+  const dropdownEl = document.getElementById('userDropdown');
+  if (dropdownEl) dropdownEl.classList.add('hidden');
 };
 
 // Home dashboard function - reloads the dashboard content
@@ -341,7 +347,8 @@ const handleDashboardHome = async () => {
     
     // Update active state in sidebar
     document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('a[href="/admin/dashboard"]').classList.add('active');
+    const dashLink = document.querySelector('a[href="/admin/dashboard"]');
+    if (dashLink) dashLink.classList.add('active');
   } catch (error) {
     console.error("Error loading dashboard:", error);
     alert("Error loading dashboard: " + error.message);
@@ -1345,6 +1352,8 @@ const AddItems = async () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
+    // Ensure numeric price is sent to backend
+    if (data.price !== undefined) data.price = parseFloat(data.price);
 
     try {
       const res = await fetch("/api/products", {
