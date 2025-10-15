@@ -32,10 +32,10 @@ export default function Landing() {
                   {isAuthenticated ? (
                     <>
                       <Button
-                        onClick={() => navigate("/cafes")}
+                        onClick={() => navigate("/menu")}
                         variant="ghost"
                       >
-                        Browse Cafés
+                        View Menu
                       </Button>
                       <Button
                         onClick={() => navigate("/orders")}
@@ -67,7 +67,7 @@ export default function Landing() {
         >
           <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 rounded-full px-6 py-3 mb-8">
             <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <span className="text-purple-900 dark:text-purple-200 font-medium">Order from your favorite local cafés</span>
+            <span className="text-purple-900 dark:text-purple-200 font-medium">Order fresh food and drinks</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
@@ -79,26 +79,26 @@ export default function Landing() {
           </h1>
 
           <p className="text-xl text-slate-600 dark:text-slate-300 mb-12 max-w-2xl mx-auto">
-            Browse menus from local cafés, place your order, and enjoy freshly prepared food and drinks. 
+            Browse our menu, place your order, and enjoy freshly prepared food and drinks. 
             Skip the line and order ahead.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => navigate(isAuthenticated ? "/cafes" : "/auth")}
+              onClick={() => navigate(isAuthenticated ? "/menu" : "/auth")}
               size="lg"
               className="text-lg px-8"
             >
               <ShoppingBag className="w-5 h-5 mr-2" />
-              {isAuthenticated ? "Browse Cafés" : "Get Started"}
+              {isAuthenticated ? "View Menu" : "Get Started"}
             </Button>
             <Button
-              onClick={() => navigate("/cafes")}
+              onClick={() => navigate("/menu")}
               size="lg"
               variant="outline"
               className="text-lg px-8"
             >
-              View Menu
+              Browse Menu
             </Button>
           </div>
         </motion.div>
@@ -113,12 +113,12 @@ export default function Landing() {
           {[
             {
               icon: Coffee,
-              title: "Local Cafés",
-              description: "Support your neighborhood coffee shops and eateries",
+              title: "Fresh & Quality",
+              description: "Freshly prepared food and drinks made with quality ingredients",
             },
             {
               icon: UtensilsCrossed,
-              title: "Fresh & Fast",
+              title: "Quick Service",
               description: "Order ahead and skip the wait. Pick up when ready",
             },
             {

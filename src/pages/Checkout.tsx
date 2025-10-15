@@ -4,21 +4,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle, Coffee } from "lucide-react";
 import { useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function Checkout() {
-  const { cafeId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const createOrder = useMutation(api.orders.create);
+  
+  const cafes = useQuery(api.cafes.list);
+  const cafe = cafes?.[0]; // Get the first (and only) cafe
 
-  const { cart, cafe } = location.state || { cart: [], cafe: null };
+  const { cart } = location.state || { cart: [] };
 
   const [customerName, setCustomerName] = useState(user?.name || "");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -29,12 +31,12 @@ export default function Checkout() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cafeId || cart.length === 0) return;
+    if (!cafe || cart.length === 0) return;
 
     setIsSubmitting(true);
     try {
       const orderId = await createOrder({
-        cafeId: cafeId as any,
+        cafeId: cafe._id,
         items: cart,
         totalAmount,
         customerName,
@@ -53,7 +55,7 @@ export default function Checkout() {
   };
 
   if (!cart || cart.length === 0) {
-    navigate("/cafes");
+    navigate("/menu");
     return null;
   }
 

@@ -10,8 +10,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 import Landing from "./pages/Landing.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import Cafes from "./pages/Cafes.tsx";
-import CafeMenu from "./pages/CafeMenu.tsx";
+import Menu from "./pages/Menu.tsx";
 import Checkout from "./pages/Checkout.tsx";
 import OrderConfirmation from "./pages/OrderConfirmation.tsx";
 import Orders from "./pages/Orders.tsx";
@@ -51,10 +50,9 @@ createRoot(document.getElementById("root")!).render(
           <RouteSyncer />
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage redirectAfterAuth="/cafes" />} />
-            <Route path="/cafes" element={<Cafes />} />
-            <Route path="/cafe/:cafeId" element={<CafeMenu />} />
-            <Route path="/checkout/:cafeId" element={<Checkout />} />
+            <Route path="/auth" element={<AuthPage redirectAfterAuth="/menu" />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/order/:orderId" element={<OrderConfirmation />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="*" element={<NotFound />} />
