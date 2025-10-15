@@ -32,12 +32,51 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
+    cafes: defineTable({
+      name: v.string(),
+      description: v.string(),
+      image: v.string(),
+      address: v.string(),
+      phone: v.string(),
+      isActive: v.boolean(),
+      ownerId: v.id("users"),
+    }).index("by_owner", ["ownerId"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    menuItems: defineTable({
+      cafeId: v.id("cafes"),
+      name: v.string(),
+      description: v.string(),
+      price: v.number(),
+      category: v.string(),
+      image: v.string(),
+      isAvailable: v.boolean(),
+    }).index("by_cafe", ["cafeId"]),
+
+    orders: defineTable({
+      userId: v.id("users"),
+      cafeId: v.id("cafes"),
+      items: v.array(v.object({
+        menuItemId: v.id("menuItems"),
+        name: v.string(),
+        price: v.number(),
+        quantity: v.number(),
+      })),
+      totalAmount: v.number(),
+      status: v.union(
+        v.literal("pending"),
+        v.literal("confirmed"),
+        v.literal("preparing"),
+        v.literal("ready"),
+        v.literal("completed"),
+        v.literal("cancelled")
+      ),
+      customerName: v.string(),
+      customerPhone: v.string(),
+      notes: v.optional(v.string()),
+    })
+      .index("by_user", ["userId"])
+      .index("by_cafe", ["cafeId"])
+      .index("by_status", ["status"]),
   },
   {
     schemaValidation: false,
