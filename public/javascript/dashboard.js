@@ -1012,7 +1012,8 @@ const handleLogout = async () => {
     try {
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
       
       if (response.ok) {
@@ -1604,3 +1605,26 @@ function handleSidebarClick(event) {
       console.warn(`⚠️ Unknown action: ${action}`);
   }
 }
+
+// Expose functions used by inline onclick handlers to the global scope
+// This fixes issues where inline HTML like onclick="saveSettings()" fails
+// because top-level const functions are not attached to window by default.
+window.toggleUserDropdown = window.toggleUserDropdown || toggleUserDropdown;
+window.showProfile = window.showProfile || showProfile;
+window.saveSettings = window.saveSettings || saveSettings;
+window.showSettings = window.showSettings || showSettings;
+
+window.handleOrder = window.handleOrder || handleOrder;
+window.handleBilling = window.handleBilling || handleBilling;
+window.handleGraph = window.handleGraph || handleGraph;
+window.handleProducts = window.handleProducts || handleProducts;
+
+window.AddItems = window.AddItems || AddItems;
+window.editProduct = window.editProduct || editProduct;
+window.deleteProduct = window.deleteProduct || deleteProduct;
+
+window.saveProfileChanges = window.saveProfileChanges || saveProfileChanges;
+window.cancelProfileEdit = window.cancelProfileEdit || cancelProfileEdit;
+
+window.fetchAnalyticsData = window.fetchAnalyticsData || fetchAnalyticsData;
+window.handleDashboardHome = window.handleDashboardHome || handleDashboardHome;
