@@ -323,7 +323,7 @@ const showSettings = () => {
 const handleDashboardHome = async () => {
   try {
     const dashboardContent = document.getElementById("dashboard-content");
-    const response = await fetch("/admin/dashboard-content", {
+    const response = await fetch("/api/dashboard/content", {
       credentials: 'include'
     });
     
@@ -577,7 +577,7 @@ window.updateAvailability = async (id, available) => {
 // Add function to update order status
 window.updateOrderStatus = async (orderId, newStatus) => {
   try {
-    const response = await fetch(`/api/orders/${orderId}`, {
+    const response = await fetch(`/api/orders/${orderId}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus }),
@@ -634,9 +634,12 @@ const handleBilling = async () => {
     </div>
   `;
   
-  // Update active state in sidebar
-  document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
-  event.target.closest('.sidebar-button').classList.add('active');
+  // Guard against undefined event (prevent ReferenceError)
+  if (typeof event !== 'undefined' && event.target) {
+    document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
+    const el = event.target.closest('.sidebar-button');
+    if (el) el.classList.add('active');
+  }
 };
 
 // Analytics data fetching function
@@ -661,7 +664,9 @@ const fetchAnalyticsData = async () => {
     `;
     
     // Fetch analytics data from backend
-    const response = await fetch(`/api/analytics?startDate=${startDate}&endDate=${endDate}&view=${viewType}`);
+    const response = await fetch(`/api/analytics?startDate=${startDate}&endDate=${endDate}&view=${viewType}`, {
+      credentials: 'include', // Ensure cookies are sent for admin-protected endpoint
+    });
     const data = await response.json();
     
     if (data.success) {
@@ -985,10 +990,13 @@ const handleGraph = async () => {
   
   // Fetch initial data
   fetchAnalyticsData();
-  
-  // Update active state in sidebar
-  document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
-  event.target.closest('.sidebar-button').classList.add('active');
+
+  // Guard against undefined event (prevent ReferenceError)
+  if (typeof event !== 'undefined' && event.target) {
+    document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
+    const el = event.target.closest('.sidebar-button');
+    if (el) el.classList.add('active');
+  }
 };
 
 // Logout function
@@ -1099,9 +1107,12 @@ const handleProducts = async () => {
     `;
   }
   
-  // Update active state in sidebar
-  document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
-  event.target.closest('.sidebar-button').classList.add('active');
+  // Guard against undefined event (prevent ReferenceError)
+  if (typeof event !== 'undefined' && event.target) {
+    document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
+    const el = event.target.closest('.sidebar-button');
+    if (el) el.classList.add('active');
+  }
 };
 
 // Edit Product Function
@@ -1208,6 +1219,7 @@ const editProduct = async (productId) => {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
+          credentials: 'include', // Add this so session cookie is sent
         });
         
         const result = await response.json();
@@ -1245,6 +1257,7 @@ const deleteProduct = async (productId, productName) => {
       const response = await fetch(`/api/products/${productId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Add this so session cookie is sent
       });
       
       const result = await response.json();
@@ -1338,6 +1351,7 @@ const AddItems = async () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        credentials: 'include', // Add this so session cookie is sent
       });
       const result = await res.json();
       
@@ -1363,12 +1377,13 @@ const AddItems = async () => {
     }
   };
   
-  // Update active state in sidebar
-  document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
-  event.target.closest('.sidebar-button').classList.add('active');
+  // Guard against undefined event (prevent ReferenceError)
+  if (typeof event !== 'undefined' && event.target) {
+    document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
+    const el = event.target.closest('.sidebar-button');
+    if (el) el.classList.add('active');
+  }
 };
-
-// <input type="text" class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white mt-5" placeholder="Category" name="category" required>
 
 // Save profile changes function
 const saveProfileChanges = async () => {
