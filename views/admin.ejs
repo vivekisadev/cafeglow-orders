@@ -3,24 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CafeFlow - Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 </head>
 <body class="bg-[#2a1b0a] text-[#ff6b00] font-semibold">
 
-    <form action="/admin/login" method="post" class="h-screen w-full flex items-center justify-center ">
+    <!-- Developer Access Button -->
+    <div class="absolute top-4 right-4">
+        <button id="dev-access-btn" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+            Dev Panel
+        </button>
+    </div>
+
+    <form id="login-form" class="h-screen w-full flex items-center justify-center ">
         <div class="flex flex-col h-70 w-80 items-center justify-center relative">
 
             <h1 class="text-4xl text-[#e5c07b]">CaféFlow</h1>
 
             <label class="self-start" for="email">Email:</label>
-            <input class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " type="email" name="email" placeholder="Enter Email">
+            <input type="email" id="email" class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " placeholder="Enter Email">
             <label class="self-start mt-3" for="password">Password:</label>
-            <input class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " type="password" name="password" placeholder="Enter password">
-            <input type="submit" value="Submit" class="px-5 py-3 w-fit bg-blue-500 text-white mt-4 rounded-full">
+            <input type="password" id="password" class="outline-none px-3 py-2 text-sm border-[1px] border-[#ff6b00] w-full rounded text-white " placeholder="Enter password">
+            <button type="submit" class="px-5 py-3 w-fit bg-blue-500 text-white mt-4 rounded-full">Submit</button>
         </div>
     </form>
+
+    <!-- Developer Panel (Hidden by default) -->
+    <div id="dev-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-96 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Developer Panel</h2>
+                <button id="close-dev-panel" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <button id="view-admins" class="w-full bg-blue-500 text-white px-4 py-2 rounded mb-2 hover:bg-blue-600">
+                    View All Admins
+                </button>
+                <button id="reset-admin" class="w-full bg-red-500 text-white px-4 py-2 rounded mb-2 hover:bg-red-600">
+                    Reset All Admins
+                </button>
+                <button id="create-admin" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Create New Admin
+                </button>
+            </div>
+            
+            <div id="dev-output" class="mt-4 p-3 bg-gray-100 rounded text-sm text-gray-700 max-h-32 overflow-y-auto hidden"></div>
+            
+            <!-- Admin List -->
+            <div id="admin-list" class="mt-4 hidden">
+                <h3 class="font-semibold mb-2">Current Admins:</h3>
+                <div id="admin-items"></div>
+            </div>
+            
+            <!-- Create Admin Form -->
+            <div id="create-admin-form" class="mt-4 hidden">
+                <h3 class="font-semibold mb-2">Create New Admin:</h3>
+                <input type="text" id="new-admin-name" placeholder="Name" class="w-full px-3 py-2 border rounded mb-2">
+                <input type="email" id="new-admin-email" placeholder="Email" class="w-full px-3 py-2 border rounded mb-2">
+                <input type="password" id="new-admin-password" placeholder="Password" class="w-full px-3 py-2 border rounded mb-2">
+                <button id="confirm-create-admin" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Create Admin
+                </button>
+            </div>
+        </div>
+    </div>
     
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div id="error-toast" class="fixed bottom-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span><%= error %></span>
+        </div>
+        <script>
+            setTimeout(() => {
+                const toast = document.getElementById('error-toast');
+                if (toast) {
+                    toast.style.display = 'none';
+                }
+            }, 3000);
+        </script>
+    <% } %>
+
+    <script>
+        // Developer Panel Functionality
+        const devAccessBtn = document.getElementById('dev-access-btn');
+        const devPanel = document.getElementById('dev-panel');
+        const closeDevPanel = document.getElementById('close-dev-panel');
+        const devOutput = document.getElementById('dev-output');
+        const adminList = document.getElementById('admin-list');
+        const adminItems = document.getElementById('admin-items');
+        const createAdminForm = document.getElementById('create-admin-form');
+        
+        // Developer access button click - ask for auth key
+        devAccessBtn.addEventListener('click', () => {
+            const authKey = prompt('Enter developer authentication key:');
+            if (authKey === 'DEV_MODE_2024') {
+                devPanel.classList.remove('hidden');
+                showDevOutput('Developer panel opened successfully!');
+            } else if (authKey !== null) {
+                alert('Invalid developer key. Please try again.');
+            }
+        });
+        
+        // Close panel
+        closeDevPanel.addEventListener('click', () => {
+            devPanel.classList.add('hidden');
+            adminList.classList.add('hidden');
+            createAdminForm.classList.add('hidden');
+            devOutput.classList.add('hidden');
+        });
+        
+        // Show output
+        function showDevOutput(message, isError = false) {
+            devOutput.classList.remove('hidden');
+            devOutput.innerHTML = message;
+            devOutput.style.backgroundColor = isError ? '#fee' : '#f0f0f0';
+            devOutput.style.color = isError ? '#d00' : '#333';
+        }
+        
+        // View all admins
+        document.getElementById('view-admins').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/developer/admins?devkey=DEV_MODE_2024');
+                const data = await response.json();
+                
+                if (data.success) {
+                    adminItems.innerHTML = '';
+                    data.admins.forEach(admin => {
+                        const adminDiv = document.createElement('div');
+                        adminDiv.className = 'p-2 border-b text-sm';
+                        adminDiv.innerHTML = `
+                            <div><strong>${admin.name}</strong></div>
+                            <div>${admin.email}</div>
+                            <div class="text-xs text-gray-500">ID: ${admin._id}</div>
+                            <button onclick="deleteAdmin('${admin._id}')" class="text-red-500 text-xs hover:underline">Delete</button>
+                        `;
+                        adminItems.appendChild(adminDiv);
+                    });
+                    adminList.classList.remove('hidden');
+                    createAdminForm.classList.add('hidden');
+                } else {
+                    showDevOutput('Error: ' + data.message, true);
+                }
+            } catch (error) {
+                showDevOutput('Error fetching admins: ' + error.message, true);
+            }
+        });
+        
+        // Reset all admins
+        document.getElementById('reset-admin').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to reset all admin accounts? This will delete all existing admins.')) {
+                try {
+                    const response = await fetch('/api/developer/admins/reset?devkey=DEV_MODE_2024', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: 'vivekverma',
+                            email: 'iamvivek@gmail.com',
+                            password: 'vivek@admin'
+                        })
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showDevOutput('All admins reset successfully! New admin created: iamvivek@gmail.com / vivek@admin');
+                    } else {
+                        showDevOutput('Error: ' + data.message, true);
+                    }
+                } catch (error) {
+                    showDevOutput('Error resetting admins: ' + error.message, true);
+                }
+            }
+        });
+        
+        // Show create admin form
+        document.getElementById('create-admin').addEventListener('click', () => {
+            createAdminForm.classList.remove('hidden');
+            adminList.classList.add('hidden');
+        });
+        
+        // Create new admin
+        document.getElementById('confirm-create-admin').addEventListener('click', async () => {
+            const name = document.getElementById('new-admin-name').value;
+            const email = document.getElementById('new-admin-email').value;
+            const password = document.getElementById('new-admin-password').value;
+            
+            if (!name || !email || !password) {
+                showDevOutput('Please fill in all fields', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/developer/admins?devkey=DEV_MODE_2024', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showDevOutput('Admin created successfully!');
+                    document.getElementById('new-admin-name').value = '';
+                    document.getElementById('new-admin-email').value = '';
+                    document.getElementById('new-admin-password').value = '';
+                } else {
+                    showDevOutput('Error: ' + data.message, true);
+                }
+            } catch (error) {
+                showDevOutput('Error creating admin: ' + error.message, true);
+            }
+        });
+        
+        // Delete admin function
+        window.deleteAdmin = async (adminId) => {
+            if (confirm('Are you sure you want to delete this admin?')) {
+                try {
+                    const response = await fetch(`/api/developer/admins/${adminId}?devkey=DEV_MODE_2024`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showDevOutput('Admin deleted successfully');
+                        // Refresh the admin list
+                        document.getElementById('view-admins').click();
+                    } else {
+                        showDevOutput('Error: ' + data.message, true);
+                    }
+                } catch (error) {
+                    showDevOutput('Error deleting admin: ' + error.message, true);
+                }
+            }
+        };
+
+        // Handle login form submission
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to dashboard on successful login
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    alert('Login failed: ' + data.message);
+                }
+            } catch (error) {
+                alert('Login error: ' + error.message);
+            }
+        });
+    </script>
 </body>
 </html>

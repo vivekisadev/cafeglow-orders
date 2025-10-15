@@ -1,0 +1,146 @@
+<!-- Main Dashboard Content -->
+<div class="p-6 bg-[#2a1b0a] rounded-xl text-[#f2e8d5] shadow-lg mb-6">
+    <h1 class="text-3xl font-bold text-[#e5c07b] mb-4">Dashboard Overview</h1>
+    <p class="mb-6 text-gray-300">Welcome to your CafeFlow dashboard. Manage your coffee shop operations efficiently.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <!-- Total Orders -->
+        <div class="bg-gradient-to-br from-[#1c110a] to-[#2a1b0a] rounded-xl p-6 text-[#f2e8d5] shadow-lg border border-[#3a2b1a]">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-shopping-cart mr-3 text-[#ff6b00] text-xl"></i>
+                    <h3 class="text-[#e5c07b] font-semibold">Total Orders</h3>
+                </div>
+                <div class="bg-[#ff6b00] bg-opacity-20 p-2 rounded-full">
+                    <i class="fas fa-chart-line text-[#ff6b00]"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold mb-2"><%= dashboardData.totalOrders %></div>
+            <div class="text-sm text-green-400">
+                <i class="fas fa-arrow-up mr-1"></i>
+                Active orders in system
+            </div>
+        </div>
+        
+        <!-- Total Products -->
+        <div class="bg-gradient-to-br from-[#1c110a] to-[#2a1b0a] rounded-xl p-6 text-[#f2e8d5] shadow-lg border border-[#3a2b1a]">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-coffee mr-3 text-[#ff6b00] text-xl"></i>
+                    <h3 class="text-[#e5c07b] font-semibold">Total Products</h3>
+                </div>
+                <div class="bg-[#ff6b00] bg-opacity-20 p-2 rounded-full">
+                    <i class="fas fa-mug-hot text-[#ff6b00]"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold mb-2"><%= dashboardData.totalProducts %></div>
+            <div class="text-sm text-blue-400">
+                <i class="fas fa-info-circle mr-1"></i>
+                Items in your menu
+            </div>
+        </div>
+        
+        <!-- Total Revenue -->
+        <div class="bg-gradient-to-br from-[#1c110a] to-[#2a1b0a] rounded-xl p-6 text-[#f2e8d5] shadow-lg border border-[#3a2b1a]">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-dollar-sign mr-3 text-[#ff6b00] text-xl"></i>
+                    <h3 class="text-[#e5c07b] font-semibold">Total Revenue</h3>
+                </div>
+                <div class="bg-[#ff6b00] bg-opacity-20 p-2 rounded-full">
+                    <i class="fas fa-piggy-bank text-[#ff6b00]"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold mb-2">$<%= dashboardData.totalRevenue.toLocaleString() %></div>
+            <div class="text-sm text-yellow-400">
+                <i class="fas fa-coins mr-1"></i>
+                From completed orders
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="bg-[#1c110a] rounded-xl p-6 text-[#f2e8d5] mb-6 border border-[#3a2b1a]">
+        <h3 class="text-xl font-semibold text-[#e5c07b] mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button data-action="additems" class="bg-gradient-to-r from-[#ff6b00] to-[#e55d00] hover:from-[#e55d00] hover:to-[#d44d00] text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-plus-circle mr-2"></i>Add Product
+            </button>
+            <button data-action="orders" class="bg-gradient-to-r from-[#ff6b00] to-[#e55d00] hover:from-[#e55d00] hover:to-[#d44d00] text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-list mr-2"></i>View Orders
+            </button>
+            <button data-action="graph" class="bg-gradient-to-r from-[#ff6b00] to-[#e55d00] hover:from-[#e55d00] hover:to-[#d44d00] text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-chart-bar mr-2"></i>Sales Report
+            </button>
+            <button data-action="billing" class="bg-gradient-to-r from-[#ff6b00] to-[#e55d00] hover:from-[#e55d00] hover:to-[#d44d00] text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-cog mr-2"></i>Billing
+            </button>
+        </div>
+        <!-- Table Menu Links -->
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-6 gap-3">
+            <% for (let t = 1; t <= 6; t++) { %>
+            <a href="/table/<%= t %>" target="_blank" class="bg-gradient-to-r from-[#1c110a] to-[#2a1b0a] border border-[#3a2b1a] rounded-lg p-3 text-center hover:border-[#ff6b00] hover:shadow-md transition-all">
+                <i class="fas fa-qrcode text-[#ff6b00] text-xl mb-1"></i>
+                <div class="text-sm text-[#e5c07b]">Table <%= t %></div>
+            </a>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="bg-[#1c110a] rounded-xl p-6 text-[#f2e8d5] border border-[#3a2b1a]">
+        <h3 class="text-xl font-semibold text-[#e5c07b] mb-4">Recent Orders</h3>
+        <div class="space-y-3">
+            <% if (dashboardData.recentOrders && dashboardData.recentOrders.length > 0) { %>
+                <% dashboardData.recentOrders.slice(0, 5).forEach(order => { %>
+                    <div class="flex items-center justify-between p-3 border-b border-[#2a1b0a] hover:bg-[#2a1b0a] rounded-lg transition-colors">
+                        <div class="flex items-center">
+                            <div class="bg-[#ff6b00] bg-opacity-20 p-2 rounded-full mr-3">
+                                <i class="fas fa-shopping-bag text-[#ff6b00]"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Order #<%= order._id.toString().slice(-6) %></p>
+                                <p class="text-sm text-gray-400">
+                                    <%= order.name || 'Unknown Customer' %> • <%= order.cart.length %> items • <%= new Date(order.time).toLocaleDateString() %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                                <div class="text-[#e5c07b] font-semibold">
+                                    $<%= order.total ? order.total.toFixed(2) : "0.00" %>
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    <%= Math.floor((Date.now() - new Date(order.time)) / (1000 * 60)) %> mins ago
+                                </div>
+                                <div class="mt-1">
+                                    <select class="text-xs bg-[#2a1b0a] text-[#f2e8d5] border border-[#3a2b1a] rounded px-2 py-1" 
+                                            onchange="updateOrderStatus('<%= order._id %>', this.value)"
+                                            style="min-width: 80px;">
+                                        <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="preparing" <%= order.status === 'preparing' ? 'selected' : '' %>>Preparing</option>
+                                        <option value="packing" <%= order.status === 'packing' ? 'selected' : '' %>>Packing</option>
+                                        <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="text-center py-8">
+                    <i class="fas fa-coffee text-4xl text-gray-500 mb-3"></i>
+                    <p class="text-gray-400">No recent orders found</p>
+                    <p class="text-sm text-gray-500 mt-1">Orders will appear here when customers place them</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <% if (dashboardData.recentOrders && dashboardData.recentOrders.length > 5) { %>
+            <div class="mt-4 text-center">
+                <button data-action="orders" class="text-[#e5c07b] hover:text-[#ff6b00] font-medium">
+                    View All Orders <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        <% } %>
+    </div>
+</div>

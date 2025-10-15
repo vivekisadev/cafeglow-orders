@@ -3,126 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="/javascript/dashboard.js"></script>
-</head>
-<body class="bg-[#2a1b0a] text-[#f2e8d5]">
-
-    <div class="w-full h-screen flex">
-        <div class="h-full w-80 border-r-2 border-white flex flex-col items-center px-8">
-            <h1 class="text-4xl text-[#e5c07b] mt-5">CaféFlow</h1>
-
-            <h1 class="text-2xl self-start mt-8">Hello <strong><%= admin.name %></strong></h1>
-
-
+    <title>CafeFlow - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff6b00;
+            --secondary-color: #2a1b0a;
+            --accent-color: #e5c07b;
+            --text-color: #f2e8d5;
+            --background-color: #1c110a;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .topbar {
+            background: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .sidebar {
+            background: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0 20px 20px 0;
+        }
+        .sidebar-button {
+            transition: all 0.3s ease;
+            background: transparent;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 12px 16px;
+            color: var(--text-color);
+        }
+        .sidebar-button:hover, .sidebar-button.active {
+            background: var(--background-color);
+            color: var(--primary-color);
+        }
+        .sidebar-button.active {
+            background-color: #e5c07b;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .sidebar-button.active:hover {
+            background-color: #d4a017;
+        }
+        .sidebar-button i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .stat-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        .stat-card .trend {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .trend.up {
+            background: rgba(52, 211, 153, 0.1);
+            color: #10b981;
+        }
+        .trend.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        th {
+            font-weight: 500;
+            color: #6b7280;
+        }
+        .action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+        .action-btn:hover {
+            color: #111827;
+        }
+        .search-bar {
+            background: white;
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            padding: 4px 8px;
+        }
+        .search-bar i {
+            color: #9ca3af;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .notification-bell {
+            position: relative;
+            font-size: 1.2rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        .notification-bell .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .product-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .product-price {
+            font-weight: 600;
+            color: #9c6644;
+        }
+        .product-sales {
+            text-align: right;
+            font-weight: 500;
+        }
+    </style></head>
+<body>
+    <div class="flex flex-col h-screen">
+        <!-- Top Bar -->
+        <div class="topbar flex justify-between items-center px-6 py-4">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold text-[#9c6644] mr-6">N</h1>
+                <div>
+                    <h2 class="text-lg font-medium">Welcome to CafeFlow</h2>
+                    <p class="text-sm text-gray-500">Choose The Category</p>
+                </div>
+            </div>
             
-
-
+            <div class="search-bar w-1/3">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search something">
+            </div>
             
-            <button onclick="handleDashboard()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer"r">
-                Dashboard
-            </button>
-           
-           
-            <button onclick="handelOrder()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
-                Order
-            </button>
-            
-            
-            <button onclick="handelItems()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
-                Menu items
-            </button>
-            
-            
-            <button onclick="AddItems()" class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
-                Add Products
-            </button>
-            
-            
-            <button class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">
-                Billing
-            </button>
-            
-            
-            <button class="my-2 flex items-center justify-center mt-5 px-5 py-2 border border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.1)] rounded-full w-40 cursor-pointer">Graph</button>
+            <div class="flex items-center space-x-6">
+                <div class="user-profile relative">
+                    <div class="flex items-center cursor-pointer" onclick="toggleUserDropdown()">
+                        <div class="text-right">
+                            <p class="font-medium">Admin</p>
+                            <p class="text-sm text-gray-500">
+                                <% if (typeof admin !== 'undefined' && admin.name) { %><%= admin.name %><% } else { %>Sheilla Poetri<% } %>
+                            </p>
+                        </div>
+                        <img src="/images/default-avatar.svg" alt="Admin Avatar" class="ml-2">
+                        <i class="fas fa-chevron-down text-xs ml-2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- User Dropdown Menu -->
+                    <div id="userDropdown" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
+                        <div class="py-2">
+                            <a href="#" onclick="showProfile()" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-user mr-3 text-gray-500"></i>
+                                Profile
+                            </a>
+                            <a href="#" onclick="showSettings()" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-cog mr-3 text-gray-500"></i>
+                                Settings
+                            </a>
+                            <hr class="my-2 border-gray-200">
+                            <a href="#" onclick="handleLogout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-bell">
+                    <i class="far fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+            </div>
         </div>
 
-        <div class="DashboardContent w-full p-8 overflow-x-auto">
-            <h1 class="text-5xl text-white mb-7">Welcome to Admin Dashboard</h1>
-
-            <% let total = 0; %>
-            <% let numOrders = 0; %>
-            <% orders.forEach((order) => { %>
-                <% total += order.total; %>
-                <% numOrders++; %>
-            <% }); %>
-            <% sno =1 %>
-
-            <div class="flex flex-col text-white">
-                <h3 class="text-2xl">Total Revenue: <span class="text-[#ff6b00]"> ₹<%= total.toFixed(2) %> </span></h3>
-                <h3 class="mt-5 text-lg">Total Orders: <span class="text-[#ff6b00]"> <%= numOrders %> </span></h3>
-                
-                <div class="mt-5">
-                    <h3 class="text-xl mb-4">Recent Orders</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="border px-4 py-2">S.no.</th>
-                                <th class="border px-4 py-2">Table Number</th>
-                                <th class="border px-4 py-2">Name</th>
-                                <th class="border px-4 py-2">Price</th>
-                                <th class="border px-4 py-2">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <% orders.forEach((order) => { %>
-                            <% if (order.cart && order.cart.length) { %>
-                                <tr>
-                                    <td class="border px-4 py-2"><%= sno %></td>
-                                    <td class="border px-4 py-2"><%= order.tableNumber %></td>
-                                    <td class="border px-4 py-2 w-40">
-
-                                        <div class="flex flex-col justify-between">
-                                            <% order.cart.forEach((item) => { %>
-                                                <div class="flex justify-between">
-
-                                                    <h5 class="w-fit">
-                                                        <%= item.product.name %> 
-                                                    </h5>
-                                                    
-                                                    <h5 class="w-fit">
-                                                        <%=item.quantity%>
-                                                    </h5>
-                                                </div>
-                                                    
-                                                <% }); %>
-                                        </div>
-
-                                        </td>
-
-                                        <td class="border px-4 py-2">
-                                             <div class="flex flex-col items-center">
-                                            <% order.cart.forEach((item) => { %>
-                                                <div class="flex justify-between">
-                                                        ₹<%= item.product.price.toFixed(2) %> 
-                                                </div>
-                                                <% }); %>
-                                        </div>
-
-                                        </td>
-                                        <td class="border px-4 py-2">₹<%= order.total ? order.total.toFixed(2) : '0.00' %></td>
-                                    </tr>
-                                    <% sno++ %>
-                            <% } %>
-                        <% }); %>
-                        </tbody>
-                    </table>
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar -->
+            <div class="w-64 sidebar flex flex-col px-4 py-6">
+                <div class="flex items-center justify-center mb-8">
+                    <h1 class="text-2xl font-bold text-[#e5c07b]">CafeFlow</h1>
                 </div>
-                <!-- Total sale: <strong>₹<%= total.toFixed(2) %></strong> -->
                 
+                <nav class="flex flex-col flex-1">
+                    <a href="/admin/dashboard" class="sidebar-button active" data-action="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="sidebar-button" data-action="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="#" class="sidebar-button" data-action="products">
+                        <i class="fas fa-coffee"></i>
+                        <span>Product Management</span>
+                    </a>
+                    <a href="#" class="sidebar-button" data-action="additems">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Products</span>
+                    </a>
+                    <a href="#" class="sidebar-button" data-action="billing">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Billing</span>
+                    </a>
+                    <a href="#" class="sidebar-button" data-action="graph">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Graph</span>
+                    </a>
+                    
+                    <div class="mt-auto">
+                        <button class="sidebar-button text-red-500" data-action="logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log Out</span>
+                        </button>
+                    </div>
+                </nav>
+                
+                <!-- Recent Orders in Sidebar -->
+                <div class="mt-8 bg-[#1c110a] rounded-xl p-4">
+                    <h3 class="text-lg font-medium text-[#e5c07b] mb-4">Recent Orders</h3>
+                    <div class="space-y-3 max-h-80 overflow-y-auto">
+                        <% if (dashboardData && dashboardData.recentOrders && dashboardData.recentOrders.length > 0) { %>
+                            <% dashboardData.recentOrders.forEach(order => { %>
+                                <div class="flex items-center p-2 border-b border-[#2a1b0a]">
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm">Order #<%= order._id.toString().slice(-6) %></p>
+                                        <p class="text-xs text-[#ff6b00]">
+                                            <%= new Date(order.time).toLocaleString() %>
+                                        </p>
+                                    </div>
+                                    <div class="text-[#e5c07b] font-medium">
+                                        $<%= order.total ? order.total.toFixed(2) : "0.00" %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="text-sm">No recent orders</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div id="dashboard-content" class="flex-1 p-6 overflow-y-auto">
+                <%- include('dashboard_content', { dashboardData: dashboardData }) %>
             </div>
         </div>
     </div>
+
+    <script src="/javascript/dashboard.js"></script>
+    <script src="/javascript/diagnostic-orders.js"></script>
+    <script src="/javascript/manual-test.js"></script>
+    <script src="/javascript/auth-test.js"></script>
 </body>
 </html>

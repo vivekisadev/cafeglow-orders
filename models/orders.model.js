@@ -28,6 +28,12 @@ const orderSchema = mongoose.Schema({
   email:{
     type:String
     
+  },
+  
+  status:{
+    type:String,
+    enum: ['pending', 'preparing', 'packing', 'completed', 'cancelled'],
+    default: 'pending'
   }
 })
 
