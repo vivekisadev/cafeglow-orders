@@ -329,7 +329,7 @@ const showSettings = () => {
 const handleDashboardHome = async () => {
   try {
     const dashboardContent = document.getElementById("dashboard-content");
-    const response = await fetch("/api/dashboard/content", {
+    const response = await fetch("/admin/dashboard-content", {
       credentials: 'include'
     });
     
@@ -357,7 +357,7 @@ const handleDashboardHome = async () => {
 
 const handleOrder = async () => {
   const dashboardContent = document.getElementById("dashboard-content");
-  const response = await fetch("/api/orders", {
+  const response = await fetch("/admin/orders", {
     credentials: 'include'
   });
 
@@ -522,7 +522,7 @@ const handleOrder = async () => {
 
 const handleItems = async () => {
   const dashboardContent = document.getElementById("dashboard-content");
-  const response = await fetch("/api/products", {
+  const response = await fetch("/admin/products", {
     credentials: 'include'
   });
   const products = await response.json();
@@ -572,7 +572,7 @@ const handleItems = async () => {
 
 // Add this function to handle availability updates
 window.updateAvailability = async (id, available) => {
-  await fetch(`/api/products/${id}`, {
+  await fetch(`/admin/products/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ availability: available }),
@@ -584,7 +584,7 @@ window.updateAvailability = async (id, available) => {
 // Add function to update order status
 window.updateOrderStatus = async (orderId, newStatus) => {
   try {
-    const response = await fetch(`/api/orders/${orderId}/status`, {
+    const response = await fetch(`/admin/orders/${orderId}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus }),
@@ -671,7 +671,7 @@ const fetchAnalyticsData = async () => {
     `;
     
     // Fetch analytics data from backend
-    const response = await fetch(`/api/analytics?startDate=${startDate}&endDate=${endDate}&view=${viewType}`, {
+    const response = await fetch(`/admin/analytics?startDate=${startDate}&endDate=${endDate}&view=${viewType}`, {
       credentials: 'include', // Ensure cookies are sent for admin-protected endpoint
     });
     const data = await response.json();
@@ -1010,7 +1010,7 @@ const handleGraph = async () => {
 const handleLogout = async () => {
   if (confirm("Are you sure you want to log out?")) {
     try {
-      const response = await fetch('/api/auth/logout', {
+      const response = await fetch('/admin/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -1034,7 +1034,7 @@ const handleProducts = async () => {
   
   try {
     // Fetch products from backend
-    const response = await fetch('/api/products');
+    const response = await fetch('/admin/products', { credentials: 'include' });
     const result = await response.json();
     
     if (!result.success) {
@@ -1126,7 +1126,7 @@ const handleProducts = async () => {
 // Edit Product Function
 const editProduct = async (productId) => {
   try {
-    const response = await fetch(`/api/products/${productId}`);
+    const response = await fetch(`/admin/products/${productId}`, { credentials: 'include' });
     const result = await response.json();
     
     if (!result.success) {
@@ -1223,7 +1223,7 @@ const editProduct = async (productId) => {
       data.price = parseFloat(data.price);
       
       try {
-        const response = await fetch(`/api/products/${productId}`, {
+        const response = await fetch(`/admin/products/${productId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -1262,7 +1262,7 @@ const editProduct = async (productId) => {
 const deleteProduct = async (productId, productName) => {
   if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
     try {
-      const response = await fetch(`/api/products/${productId}`, {
+      const response = await fetch(`/admin/products/${productId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Add this so session cookie is sent
@@ -1357,7 +1357,7 @@ const AddItems = async () => {
     if (data.price !== undefined) data.price = parseFloat(data.price);
 
     try {
-      const res = await fetch("/api/products", {
+      const res = await fetch("/admin/add-products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -1417,7 +1417,7 @@ const saveProfileChanges = async () => {
   }
 
   try {
-    const response = await fetch('/api/auth/profile', {
+    const response = await fetch('/admin/profile/update', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
