@@ -62,35 +62,29 @@ export default function CafeMenu() {
   const categories = menuItems ? Array.from(new Set(menuItems.map((item) => item.category))) : [];
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-32">
-      {/* Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-pink-300 via-purple-300 to-blue-400 -z-10" />
-      <div className="fixed top-0 left-0 w-96 h-96 bg-pink-400 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2" />
-      <div className="fixed bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-30 translate-x-1/2 translate-y-1/2" />
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 pb-32">
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b"
       >
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl px-6 py-4 shadow-lg">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => navigate("/cafes")}
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <span className="text-xl font-bold text-white">{cafe?.name || "Menu"}</span>
+              <span className="text-xl font-bold text-slate-900 dark:text-white">{cafe?.name || "Menu"}</span>
             </div>
             {totalItems > 0 && (
-              <div className="flex items-center gap-2 backdrop-blur-xl bg-white/20 border border-white/30 rounded-2xl px-4 py-2">
-                <ShoppingCart className="w-5 h-5 text-white" />
-                <span className="text-white font-semibold">{totalItems} items</span>
+              <div className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 rounded-full px-4 py-2">
+                <ShoppingCart className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <span className="text-purple-900 dark:text-purple-200 font-semibold">{totalItems} items</span>
               </div>
             )}
           </div>
@@ -105,7 +99,7 @@ export default function CafeMenu() {
           className="max-w-6xl mx-auto"
         >
           {cafe && (
-            <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl overflow-hidden mb-8 shadow-xl">
+            <div className="bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden mb-8">
               <div className="relative h-64">
                 <img src={cafe.image} alt={cafe.name} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -119,12 +113,12 @@ export default function CafeMenu() {
 
           {!menuItems ? (
             <div className="flex justify-center">
-              <Coffee className="w-8 h-8 text-white animate-spin" />
+              <Coffee className="w-8 h-8 text-purple-600 animate-spin" />
             </div>
           ) : (
             categories.map((category) => (
               <div key={category} className="mb-12">
-                <h2 className="text-3xl font-bold text-white mb-6 drop-shadow-lg">{category}</h2>
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">{category}</h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {menuItems
                     .filter((item) => item.category === category)
@@ -136,7 +130,7 @@ export default function CafeMenu() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl overflow-hidden shadow-xl hover:bg-white/15 transition-all duration-300"
+                          className="bg-white dark:bg-slate-800 border rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
                         >
                           <div className="relative h-40 overflow-hidden">
                             <img
@@ -147,28 +141,28 @@ export default function CafeMenu() {
                           </div>
                           <div className="p-5">
                             <div className="flex items-start justify-between mb-2">
-                              <h3 className="text-xl font-bold text-white">{item.name}</h3>
-                              <Badge className="bg-white/20 text-white border-white/30">
+                              <h3 className="text-xl font-bold text-slate-900 dark:text-white">{item.name}</h3>
+                              <Badge variant="secondary">
                                 ${item.price.toFixed(2)}
                               </Badge>
                             </div>
-                            <p className="text-white/80 text-sm mb-4">{item.description}</p>
+                            <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">{item.description}</p>
                             {cartItem ? (
-                              <div className="flex items-center justify-between backdrop-blur-xl bg-white/20 border border-white/30 rounded-2xl p-2">
+                              <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-700 rounded-xl p-2">
                                 <Button
                                   size="icon"
                                   variant="ghost"
                                   onClick={() => updateQuantity(item._id, -1)}
-                                  className="text-white hover:bg-white/20 h-8 w-8"
+                                  className="h-8 w-8"
                                 >
                                   <Minus className="w-4 h-4" />
                                 </Button>
-                                <span className="text-white font-semibold">{cartItem.quantity}</span>
+                                <span className="text-slate-900 dark:text-white font-semibold">{cartItem.quantity}</span>
                                 <Button
                                   size="icon"
                                   variant="ghost"
                                   onClick={() => updateQuantity(item._id, 1)}
-                                  className="text-white hover:bg-white/20 h-8 w-8"
+                                  className="h-8 w-8"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </Button>
@@ -176,7 +170,8 @@ export default function CafeMenu() {
                             ) : (
                               <Button
                                 onClick={() => addToCart(item)}
-                                className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                                className="w-full"
+                                variant="outline"
                               >
                                 Add to Cart
                               </Button>
@@ -199,16 +194,16 @@ export default function CafeMenu() {
           animate={{ y: 0, opacity: 1 }}
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
         >
-          <div className="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white dark:bg-slate-800 border rounded-2xl p-6 shadow-xl">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-white/80 text-sm">Total ({totalItems} items)</p>
-                <p className="text-3xl font-bold text-white">${totalAmount.toFixed(2)}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-sm">Total ({totalItems} items)</p>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white">${totalAmount.toFixed(2)}</p>
               </div>
               <Button
                 onClick={() => navigate(`/checkout/${cafeId}`, { state: { cart, cafe } })}
                 size="lg"
-                className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white border-0 shadow-lg px-8"
+                className="px-8"
               >
                 Checkout
                 <ShoppingCart className="ml-2 w-5 h-5" />

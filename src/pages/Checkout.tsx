@@ -58,29 +58,23 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-pink-300 via-purple-300 to-blue-400 -z-10" />
-      <div className="fixed top-0 left-0 w-96 h-96 bg-pink-400 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2" />
-      <div className="fixed bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-30 translate-x-1/2 translate-y-1/2" />
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b"
       >
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl px-6 py-4 shadow-lg">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-4 h-16">
             <Button
               onClick={() => navigate(-1)}
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <span className="text-xl font-bold text-white">Checkout</span>
+            <span className="text-xl font-bold text-slate-900 dark:text-white">Checkout</span>
           </div>
         </div>
       </motion.nav>
@@ -94,17 +88,17 @@ export default function Checkout() {
         >
           <div className="grid md:grid-cols-2 gap-6">
             {/* Order Summary */}
-            <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-6 shadow-xl h-fit">
-              <h2 className="text-2xl font-bold text-white mb-4">Order Summary</h2>
+            <div className="bg-white dark:bg-slate-800 border rounded-2xl p-6 h-fit">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Order Summary</h2>
               {cafe && (
-                <div className="mb-4 pb-4 border-b border-white/20">
-                  <p className="text-white font-semibold">{cafe.name}</p>
-                  <p className="text-white/70 text-sm">{cafe.address}</p>
+                <div className="mb-4 pb-4 border-b">
+                  <p className="text-slate-900 dark:text-white font-semibold">{cafe.name}</p>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">{cafe.address}</p>
                 </div>
               )}
               <div className="space-y-3 mb-4">
                 {cart.map((item: any) => (
-                  <div key={item.menuItemId} className="flex justify-between text-white">
+                  <div key={item.menuItemId} className="flex justify-between text-slate-900 dark:text-white">
                     <span>
                       {item.quantity}x {item.name}
                     </span>
@@ -112,8 +106,8 @@ export default function Checkout() {
                   </div>
                 ))}
               </div>
-              <div className="pt-4 border-t border-white/20">
-                <div className="flex justify-between text-white text-xl font-bold">
+              <div className="pt-4 border-t">
+                <div className="flex justify-between text-slate-900 dark:text-white text-xl font-bold">
                   <span>Total</span>
                   <span>${totalAmount.toFixed(2)}</span>
                 </div>
@@ -121,46 +115,44 @@ export default function Checkout() {
             </div>
 
             {/* Customer Details Form */}
-            <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-6 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6">Your Details</h2>
+            <div className="bg-white dark:bg-slate-800 border rounded-2xl p-6">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Your Details</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="name" className="text-white mb-2 block">Name</Label>
+                  <Label htmlFor="name" className="mb-2 block">Name</Label>
                   <Input
                     id="name"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     required
-                    className="backdrop-blur-xl bg-white/20 border-white/30 text-white placeholder:text-white/50"
                     placeholder="Your name"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone" className="text-white mb-2 block">Phone Number</Label>
+                  <Label htmlFor="phone" className="mb-2 block">Phone Number</Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     required
-                    className="backdrop-blur-xl bg-white/20 border-white/30 text-white placeholder:text-white/50"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="notes" className="text-white mb-2 block">Special Instructions (Optional)</Label>
+                  <Label htmlFor="notes" className="mb-2 block">Special Instructions (Optional)</Label>
                   <Textarea
                     id="notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="backdrop-blur-xl bg-white/20 border-white/30 text-white placeholder:text-white/50 min-h-24"
+                    className="min-h-24"
                     placeholder="Any special requests?"
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white border-0 shadow-lg py-6 text-lg"
+                  className="w-full py-6 text-lg"
                 >
                   {isSubmitting ? (
                     <>

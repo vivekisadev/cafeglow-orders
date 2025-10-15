@@ -14,8 +14,8 @@ export default function Orders() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-blue-400">
-        <Coffee className="w-8 h-8 text-white animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+        <Coffee className="w-8 h-8 text-purple-600 animate-spin" />
       </div>
     );
   }
@@ -27,50 +27,43 @@ export default function Orders() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-yellow-500/20 text-yellow-200 border-yellow-500/30";
-      case "confirmed": return "bg-blue-500/20 text-blue-200 border-blue-500/30";
-      case "preparing": return "bg-purple-500/20 text-purple-200 border-purple-500/30";
-      case "ready": return "bg-green-500/20 text-green-200 border-green-500/30";
-      case "completed": return "bg-gray-500/20 text-gray-200 border-gray-500/30";
-      case "cancelled": return "bg-red-500/20 text-red-200 border-red-500/30";
-      default: return "bg-white/20 text-white border-white/30";
+      case "pending": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200";
+      case "confirmed": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200";
+      case "preparing": return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200";
+      case "ready": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200";
+      case "completed": return "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200";
+      case "cancelled": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200";
+      default: return "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200";
     }
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-pink-300 via-purple-300 to-blue-400 -z-10" />
-      <div className="fixed top-0 left-0 w-96 h-96 bg-pink-400 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2" />
-      <div className="fixed bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-30 translate-x-1/2 translate-y-1/2" />
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b"
       >
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl px-6 py-4 shadow-lg">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => navigate("/")}
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                   <Coffee className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">My Orders</span>
+                <span className="text-2xl font-bold text-slate-900 dark:text-white">My Orders</span>
               </div>
             </div>
             <Button
               onClick={() => navigate("/cafes")}
-              className="bg-white/20 hover:bg-white/30 text-white border border-white/30"
             >
               Browse Cafés
             </Button>
@@ -87,16 +80,15 @@ export default function Orders() {
         >
           {!orders ? (
             <div className="flex justify-center">
-              <Coffee className="w-8 h-8 text-white animate-spin" />
+              <Coffee className="w-8 h-8 text-purple-600 animate-spin" />
             </div>
           ) : orders.length === 0 ? (
-            <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-12 text-center">
-              <ShoppingBag className="w-16 h-16 text-white/50 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-2">No orders yet</h2>
-              <p className="text-white/80 mb-6">Start by browsing our cafés and placing your first order!</p>
+            <div className="bg-white dark:bg-slate-800 border rounded-2xl p-12 text-center">
+              <ShoppingBag className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">No orders yet</h2>
+              <p className="text-slate-600 dark:text-slate-300 mb-6">Start by browsing our cafés and placing your first order!</p>
               <Button
                 onClick={() => navigate("/cafes")}
-                className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white border-0"
               >
                 Browse Cafés
               </Button>
@@ -110,15 +102,15 @@ export default function Orders() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => navigate(`/order/${order._id}`)}
-                  className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-6 shadow-xl hover:bg-white/15 transition-all duration-300 cursor-pointer"
+                  className="bg-white dark:bg-slate-800 border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="text-white/70 text-sm mb-1">
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">
                         {new Date(order._creationTime).toLocaleDateString()} at{" "}
                         {new Date(order._creationTime).toLocaleTimeString()}
                       </p>
-                      <p className="text-white font-semibold">{order.customerName}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{order.customerName}</p>
                     </div>
                     <Badge className={getStatusColor(order.status)}>
                       {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
@@ -127,16 +119,16 @@ export default function Orders() {
 
                   <div className="space-y-2 mb-4">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between text-white/90">
+                      <div key={idx} className="flex justify-between text-slate-900 dark:text-white">
                         <span>{item.quantity}x {item.name}</span>
                         <span>${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="pt-4 border-t border-white/20 flex justify-between items-center">
-                    <span className="text-white font-bold text-lg">Total</span>
-                    <span className="text-white font-bold text-xl">${order.totalAmount.toFixed(2)}</span>
+                  <div className="pt-4 border-t flex justify-between items-center">
+                    <span className="text-slate-900 dark:text-white font-bold text-lg">Total</span>
+                    <span className="text-slate-900 dark:text-white font-bold text-xl">${order.totalAmount.toFixed(2)}</span>
                   </div>
                 </motion.div>
               ))}
