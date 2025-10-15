@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CafeFlow - Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#1c110a] text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#2a1b0a] border-r border-[#3a2b1a]">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-[#e5c07b]">CaféFlow</h1>
+            </div>
+            <nav class="mt-6">
+                <button class="sidebar-button active w-full text-left px-6 py-3 hover:bg-[#3a2b1a] transition-colors" data-action="dashboard">
+                    <i class="fas fa-home mr-3"></i>Dashboard
+                </button>
+                <button class="sidebar-button w-full text-left px-6 py-3 hover:bg-[#3a2b1a] transition-colors" data-action="orders">
+                    <i class="fas fa-shopping-cart mr-3"></i>Orders
+                </button>
+                <button class="sidebar-button w-full text-left px-6 py-3 hover:bg-[#3a2b1a] transition-colors" data-action="products">
+                    <i class="fas fa-coffee mr-3"></i>Products
+                </button>
+                <button class="sidebar-button w-full text-left px-6 py-3 hover:bg-[#3a2b1a] transition-colors" data-action="graph">
+                    <i class="fas fa-chart-line mr-3"></i>Analytics
+                </button>
+                <button class="sidebar-button w-full text-left px-6 py-3 hover:bg-[#3a2b1a] transition-colors" data-action="logout">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Top Bar -->
+            <header class="bg-[#2a1b0a] border-b border-[#3a2b1a] px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-[#e5c07b]">Admin Dashboard</h2>
+                    <div class="flex items-center space-x-4">
+                        <div class="user-profile relative">
+                            <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 hover:bg-[#3a2b1a] px-3 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-user-circle text-2xl text-[#ff6b00]"></i>
+                                <div class="text-left">
+                                    <p class="text-gray-700 font-medium text-white"><%= admin.name %></p>
+                                    <p class="text-gray-500 text-sm"><%= admin.email %></p>
+                                </div>
+                            </button>
+                            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-[#2a1b0a] border border-[#3a2b1a] rounded-lg shadow-lg z-10">
+                                <button onclick="showProfile()" class="w-full text-left px-4 py-2 hover:bg-[#3a2b1a] transition-colors">
+                                    <i class="fas fa-user mr-2"></i>Profile
+                                </button>
+                                <button onclick="showSettings()" class="w-full text-left px-4 py-2 hover:bg-[#3a2b1a] transition-colors">
+                                    <i class="fas fa-cog mr-2"></i>Settings
+                                </button>
+                                <button onclick="handleLogout()" class="w-full text-left px-4 py-2 hover:bg-[#3a2b1a] transition-colors text-red-400">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="p-6">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </main>
+    </div>
+
     <script src="/javascript/dashboard.js"></script>
+</body>
+</html>
